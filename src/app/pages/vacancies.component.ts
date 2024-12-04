@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -18,24 +19,17 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   selector: 'app-vacancies',
   standalone: true,
   imports: [
-    NzBreadCrumbModule,
     NzIconModule,
-    NzMenuModule,
-    NzLayoutModule,
     NzCardModule,
     FormsModule,
     NzAvatarModule,
     NzCardModule,
     NzIconModule,
-    NzSwitchModule,
     NzSkeletonModule,
     NzButtonModule,
-    NzFlexModule,
     NzTypographyModule,
     NzButtonModule,
-    NzInputModule,
     NzIconModule,
-    NzModalModule,
   ],
   template: `
     @for(vacancy of vacancyLists; track vacancy.id) {
@@ -69,16 +63,6 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
       </div>
     </nz-card>
     }
-
-    <nz-modal
-      [(nzVisible)]="isVisible"
-      nzTitle="Müraciət et forması"
-      (nzOnCancel)="handleCancel()"
-      (nzOnOk)="handleOk()"
-      [nzOkLoading]="isOkLoading"
-    >
-      <p *nzModalContent></p>
-    </nz-modal>
   `,
   styles: ``,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -87,22 +71,7 @@ export class VacanciesComponent {
   loading = !true;
   isVisible = false;
   isOkLoading = false;
-
-  showModal(): void {
-    this.isVisible = true;
-  }
-
-  handleOk(): void {
-    this.isOkLoading = true;
-    setTimeout(() => {
-      this.isVisible = false;
-      this.isOkLoading = false;
-    }, 3000);
-  }
-
-  handleCancel(): void {
-    this.isVisible = false;
-  }
+  router: Router = inject(Router);
   vacancyLists = [
     {
       id: 1,
@@ -119,7 +88,6 @@ export class VacanciesComponent {
   ];
 
   applayVacancy(id: number): void {
-    console.log(id);
-    this.showModal();
+    this.router.navigate(['/', id]);
   }
 }

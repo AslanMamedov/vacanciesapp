@@ -12,6 +12,7 @@ import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient } from '@angular/common/http';
+import { provideEnvironmentNgxMask } from 'ngx-mask';
 
 registerLocaleData(en);
 
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideNzI18n(en_US),
     importProvidersFrom(FormsModule),
+    provideEnvironmentNgxMask(),
     provideAnimationsAsync(),
     provideHttpClient(),
   ],
