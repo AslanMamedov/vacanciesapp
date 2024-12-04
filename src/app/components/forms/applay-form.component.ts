@@ -3,30 +3,25 @@ import {
   FormGroup,
   NonNullableFormBuilder,
   ReactiveFormsModule,
-
   Validators,
 } from '@angular/forms';
 import { Subject } from 'rxjs';
-
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+
+import { NumberList } from '#types/union';
+import { CInputPhoneComponent, CInputTextComponent } from '#components';
+
 @Component({
   selector: 'app-applay-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
     NzButtonModule,
-    NzCheckboxModule,
     NzFormModule,
-    NzInputModule,
-    NzSelectModule,
-    NgxMaskDirective,
+    CInputTextComponent,
+    CInputPhoneComponent,
   ],
-  providers: [provideNgxMask()],
   template: `
     <form
       nz-form
@@ -34,103 +29,57 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
       (ngSubmit)="submitForm()"
       class="w-[600px] m-4"
     >
-      <nz-form-item class="!border-red-400">
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Adını daxil edin!">
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" nzRequired
-            >Ad
-          </nz-form-label>
-          <input nz-input id="name" formControlName="name" placeholder="Ad" />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-control
-          [nzSm]="14"
-          [nzXs]="24"
-          nzErrorTip="Soyadını daxil edin!"
-        >
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="surname" nzRequired
-            >Soyad
-          </nz-form-label>
-          <input
-            nz-input
-            id="surname"
-            formControlName="surname"
-            placeholder="Soyad"
-          />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-control
-          [nzSm]="14"
-          [nzXs]="24"
-          nzErrorTip="E-mail daxil edin!"
-        >
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email"
-            >E-mail</nz-form-label
-          >
-          <input nz-input formControlName="email" id="email" />
-        </nz-form-control>
-      </nz-form-item>
+      <app-c-input-text
+        name="name"
+        errorText="Adını daxil edin!"
+        placeholder="Ad"
+        label="Ad"
+      />
+      <app-c-input-text
+        name="surname"
+        errorText="Soyadını daxil edin!"
+        placeholder="Soyad"
+        label="Soyad"
+      />
+      <app-c-input-text
+        name="email"
+        errorText="E-mail daxil edin!"
+        placeholder="E-mail"
+        label="E-mail"
+      />
+      <app-c-input-phone
+        errorText="Telefon daxil edin!"
+        label="Telefon"
+        mask="000-00-00"
+        name="phoneNumber"
+        placeholder="Telefon"
+        [prefixList]="phonePrefixList"
+      />
 
-      <nz-form-item>
-        <nz-form-control
-          [nzSm]="14"
-          [nzXs]="24"
-          [nzValidateStatus]="validateForm.controls['phoneNumber']"
-          nzErrorTip="Telefon daxil edin!"
-        >
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="phoneNumber" nzRequired
-            >Telefon nömrəsi</nz-form-label
-          >
-          <nz-input-group [nzAddOnBefore]="addOnBeforeTemplate">
-            <ng-template #addOnBeforeTemplate>
-              <nz-select formControlName="phoneNumberPrefix" class="!w-[80px]">
-                <nz-option nzLabel="055" nzValue="055"></nz-option>
-                <nz-option nzLabel="050" nzValue="050"></nz-option>
-                <nz-option nzLabel="070" nzValue="070"></nz-option>
-              </nz-select>
-            </ng-template>
-            <input
-              formControlName="phoneNumber"
-              id="'phoneNumber'"
-              nz-input
-              type="text"
-              mask="000-00-00"
-            />
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-
-      <nz-form-item nz-row class="register-area ">
+      <nz-form-item nz-row class="applay-area ">
         <nz-form-control [nzSpan]="14" [nzOffset]="6">
           <button type="submit" nz-button nzType="primary">Təstiq et</button>
         </nz-form-control>
       </nz-form-item>
     </form>
   `,
-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplayFormComponent {
   private destroy$ = new Subject<void>();
-  validateForm: FormGroup;
-
+  protected validateForm: FormGroup;
+  public phonePrefixList: NumberList[] = ['055', '050', '070'];
   constructor(private fb: NonNullableFormBuilder) {
     this.validateForm = this.fb.group({
-      email: this.fb.control('', [Validators.email, Validators.required]),
-      phoneNumberPrefix: this.fb.control<'050' | '055'>('055'),
-      phoneNumber: this.fb.control('', [Validators.required]),
-      name: this.fb.control('', [Validators.required]),
       surname: this.fb.control('', [Validators.required]),
+      name: this.fb.control('', [Validators.required]),
+      email: this.fb.control('', [Validators.email, Validators.required]),
+      phoneNumberPrefix: this.fb.control<NumberList>('055'),
+      phoneNumber: this.fb.control('', [Validators.required]),
     });
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  submitForm(): void {
+  protected submitForm(): void {
     if (this.validateForm.valid) {
       console.log('submit', this.validateForm.value);
     } else {
@@ -142,12 +91,9 @@ export class ApplayFormComponent {
       });
     }
   }
-  onInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    input.value = input.value.replace(/[^0-9]/g, '');
-    const formControl = this.validateForm.get('phoneNumber');
-    if (formControl) {
-      formControl.setValue(input.value, { emitEvent: false });
-    }
+
+  public ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
