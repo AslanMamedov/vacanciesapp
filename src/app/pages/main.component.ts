@@ -9,6 +9,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { CTimerComponent } from '#components';
 
 @Component({
   selector: 'app-main',
@@ -26,6 +27,7 @@ import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
     NzButtonModule,
     NzIconModule,
     RouterOutlet,
+    CTimerComponent,
   ],
   template: `
     <nz-layout class="h-full">
@@ -55,13 +57,16 @@ import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
           ></button>
         </nz-header>
         <nz-content class="h-full !m-0 overflow-y-auto ">
+          <div class="p-4 border-red-400 border">
+            <app-c-timer></app-c-timer>
+          </div>
           <router-outlet></router-outlet>
         </nz-content>
       </nz-layout>
     </nz-layout>
   `,
 
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainComponent {
   isCollapsed = false;

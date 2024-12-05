@@ -140,6 +140,10 @@ export class CStepsComponent {
     this.validateForm.patchValue({
       option: this.questionData()[this.current() - 1]?.option,
     });
+    this.questionData.update((prev) => {
+      delete prev[this.current() - 1];
+      return prev;
+    });
 
     this.current.update((current) => current - 1);
   }
@@ -160,6 +164,10 @@ export class CStepsComponent {
       questionList: this.addQuestion().value,
     });
     this.current.update((current) => current + 1);
+  }
+
+  ngDoCheck(): void {
+    console.log(this.questionData());
   }
 
   onSubmit(): void {
