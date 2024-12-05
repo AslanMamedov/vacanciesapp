@@ -34,7 +34,6 @@ import { ApplayFormComponent, CDrawerComponent } from '#components';
   ],
   template: `
     @for(vacancy of vacancyLists; track vacancy.id) {
-
     <nz-card class="w-full  h-[160px] mt-2" [nzLoading]="loading()">
       <div class="flex justify-between  h-[100px]  flex-1 gap-2">
         <div class="flex flex-col items-start flex-1 justify-between">
@@ -64,6 +63,9 @@ import { ApplayFormComponent, CDrawerComponent } from '#components';
       </div>
     </nz-card>
 
+    } @empty {
+    <div>Hal hazırda vakansiya yoxdur ...</div>
+    }
     <app-c-drawer
       [isVisible]="isVisible()"
       (onCloseHandler)="onCloseHandler($event)"
@@ -73,7 +75,6 @@ import { ApplayFormComponent, CDrawerComponent } from '#components';
         [isVisible]="isVisible()"
       ></app-applay-form>
     </app-c-drawer>
-    }
   `,
   styles: ``,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -81,7 +82,6 @@ import { ApplayFormComponent, CDrawerComponent } from '#components';
 export class VacanciesComponent {
   public loading = signal<boolean>(false);
   public isVisible = signal<boolean>(false);
-  protected router = inject<Router>(Router);
   public vacancyId = signal<number | string | null>(null);
   vacancyLists = [
     {
@@ -105,6 +105,5 @@ export class VacanciesComponent {
   applayVacancy(id: number): void {
     this.isVisible.set(true);
     this.vacancyId.set(id);
-
   }
 }

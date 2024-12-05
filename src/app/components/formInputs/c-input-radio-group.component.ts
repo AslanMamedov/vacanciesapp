@@ -1,3 +1,4 @@
+import { IInputOptions } from '#types';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,12 +11,12 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 @Component({
-  selector: 'app-c-input-text',
+  selector: 'app-c-input-radio-group',
   standalone: true,
-  imports: [ReactiveFormsModule, NzFormModule, NzInputModule],
+  imports: [NzRadioModule, ReactiveFormsModule, NzFormModule],
   viewProviders: [
     {
       provide: ControlContainer,
@@ -23,40 +24,27 @@ import { NzInputModule } from 'ng-zorro-antd/input';
     },
   ],
   template: `
-    <nz-form-item class="">
-      <nz-form-control [nzErrorTip]="errorText()">
-        <nz-form-label [nzSm]="6" [nzXs]="24" [nzFor]="name()" nzRequired
-          >{{ label() }}
-        </nz-form-label>
-        <input
-          nz-input
-          [type]="type() || 'text'"
-          [id]="name()"
-          [formControlName]="name()"
-          [placeholder]="placeholder()"
-        />
+    <nz-form-item>
+      <nz-form-control>
+        <nz-radio-group [formControlName]="name()" class="flex flex-col">
+          @for(option of optionList(); track option.value) {
+          <label nz-radio [nzValue]="option.value">{{ option.label }}</label>
+          }
+        </nz-radio-group>
       </nz-form-control>
     </nz-form-item>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CInputTextComponent {
+export class CInputRadioGroupComponent {
   public name = input.required<string>({ alias: 'name' });
-  public type = input<string>();
-  public errorText = input.required<string>({
-    alias: 'errorText',
-  });
-  public placeholder = input.required<string>({
-    alias: 'placeholder',
-  });
-  public label = input.required<string>({
-    alias: 'label',
-  });
+
+  public optionList = input.required<IInputOptions[]>();
+
   public parentContainer = inject<ControlContainer>(ControlContainer);
   public get parentFormGroup(): FormGroup {
     return this.parentContainer.control as FormGroup;
   }
-
   public ngOnInit(): void {
     this.parentFormGroup.addControl(
       this.name(),

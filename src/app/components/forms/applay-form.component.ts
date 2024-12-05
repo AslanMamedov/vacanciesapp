@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   effect,
+  inject,
   input,
+  signal,
 } from '@angular/core';
 import {
   FormGroup,
@@ -15,7 +17,12 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 
 import { NumberList } from '#types/union';
-import { CInputPhoneComponent, CInputTextComponent } from '#components';
+import {
+  CConfirmModalComponent,
+  CInputPhoneComponent,
+  CInputTextComponent,
+} from '#components';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-applay-form',
@@ -26,6 +33,7 @@ import { CInputPhoneComponent, CInputTextComponent } from '#components';
     NzFormModule,
     CInputTextComponent,
     CInputPhoneComponent,
+    CConfirmModalComponent,
   ],
   template: `
     <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()" class="">
@@ -64,6 +72,11 @@ import { CInputPhoneComponent, CInputTextComponent } from '#components';
         </nz-form-control>
       </nz-form-item>
     </form>
+    <app-c-confirm-modal
+      [isShowConfirm]="showConfirm()"
+      [id]="vacancyId()"
+      (onClose)="onClose($event)"
+    ></app-c-confirm-modal>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -75,6 +88,8 @@ export class ApplayFormComponent {
   public isVisible = input.required<boolean>({
     alias: 'isVisible',
   });
+  public showConfirm = signal<boolean>(false);
+
   protected validateForm: FormGroup;
   public phonePrefixList: NumberList[] = ['055', '050', '070'];
   constructor(private fb: NonNullableFormBuilder) {
@@ -85,6 +100,10 @@ export class ApplayFormComponent {
       phoneNumberPrefix: this.fb.control<NumberList>('055'),
       phoneNumber: this.fb.control('', [Validators.required]),
     });
+  }
+
+  onClose($event: boolean): void {
+    this.showConfirm.set($event);
   }
 
   effect = effect(
@@ -102,7 +121,7 @@ export class ApplayFormComponent {
         ...this.validateForm.value,
         id: this.vacancyId(),
       };
-      console.log('submit', vacancyData);
+      this.showConfirm.set(true);
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
         if (control.invalid) {
