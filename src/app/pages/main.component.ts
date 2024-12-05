@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -8,7 +8,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { CTimerComponent } from '#components';
 
 @Component({
@@ -49,14 +49,16 @@ import { CTimerComponent } from '#components';
       </nz-sider>
       <nz-layout>
         <nz-header class="bg-white !p-0 !px-4">
-          <div class="flex justify-between ">
+          <div class="flex justify-between items-center h-[64px]">
             <button
               class="text-xl  hover:text-[#1890ff]"
               nz-icon
               [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
               (click)="isCollapsed = !isCollapsed"
             ></button>
+            @if(isStartTest()) {
             <app-c-timer></app-c-timer>
+            }
           </div>
         </nz-header>
         <nz-content class="h-full !m-0 overflow-y-auto ">
@@ -65,14 +67,12 @@ import { CTimerComponent } from '#components';
       </nz-layout>
     </nz-layout>
   `,
-
-  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainComponent {
   isCollapsed = false;
   loading = !true;
   currentUrl: string = '';
-
+  isStartTest = signal<boolean>(false);
   routeList = [
     {
       text: 'Elanlar',

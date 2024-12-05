@@ -4,7 +4,7 @@ import {
   input,
   output,
 } from '@angular/core';
-import { NzDrawerModule, NzDrawerPlacement } from 'ng-zorro-antd/drawer';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 
 @Component({
   selector: 'app-c-drawer',
@@ -14,7 +14,7 @@ import { NzDrawerModule, NzDrawerPlacement } from 'ng-zorro-antd/drawer';
     <nz-drawer
       [nzClosable]="false"
       [nzVisible]="isVisible()"
-      [nzPlacement]="placement"
+      nzPlacement="right"
       (nzOnClose)="onClose()"
     >
       <ng-container *nzDrawerContent>
@@ -29,7 +29,6 @@ export class CDrawerComponent {
   public isVisible = input.required<boolean>({
     alias: 'isVisible',
   });
-  placement: NzDrawerPlacement = 'right';
 
   public onCloseHandler = output<boolean>();
 

@@ -22,7 +22,8 @@ import {
   CInputPhoneComponent,
   CInputTextComponent,
 } from '#components';
-import { Router } from '@angular/router';
+import { phonePrefix } from '#constant';
+import { UserDataService } from '../../services/user-data.service';
 
 @Component({
   selector: 'app-applay-form',
@@ -91,7 +92,10 @@ export class ApplayFormComponent {
   public showConfirm = signal<boolean>(false);
 
   protected validateForm: FormGroup;
-  public phonePrefixList: NumberList[] = ['055', '050', '070'];
+  public phonePrefixList: NumberList[] = phonePrefix;
+
+  public userDataService = inject(UserDataService);
+
   constructor(private fb: NonNullableFormBuilder) {
     this.validateForm = this.fb.group({
       surname: this.fb.control('', [Validators.required]),
@@ -121,6 +125,7 @@ export class ApplayFormComponent {
         ...this.validateForm.value,
         id: this.vacancyId(),
       };
+      this.userDataService.setUserData(vacancyData);
       this.showConfirm.set(true);
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
@@ -131,8 +136,6 @@ export class ApplayFormComponent {
       });
     }
   }
-
-  ngOnChanges(): void {}
 
   public ngOnDestroy(): void {
     this.destroy$.next();

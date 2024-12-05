@@ -29,6 +29,13 @@ export const routes: Routes = [
             (m) => m.QuestionsComponent
           ),
       },
+      {
+        path: ':id/result',
+        pathMatch: 'full',
+        title: 'Nəticə',
+        loadComponent: () =>
+          import('./pages/result.component').then((m) => m.ResultComponent),
+      },
     ],
   },
 ];

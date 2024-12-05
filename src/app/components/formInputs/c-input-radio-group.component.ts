@@ -26,9 +26,11 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
   template: `
     <nz-form-item>
       <nz-form-control>
-        <nz-radio-group [formControlName]="name()" class="flex flex-col">
+        <nz-radio-group [formControlName]="name()" class="flex flex-col gap-4">
           @for(option of optionList(); track option.value) {
-          <label nz-radio [nzValue]="option.value">{{ option.label }}</label>
+          <label nz-radio [nzValue]="option.value">
+            {{ option.label }}
+          </label>
           }
         </nz-radio-group>
       </nz-form-control>

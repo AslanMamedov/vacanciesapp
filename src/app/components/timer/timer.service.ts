@@ -11,8 +11,6 @@ export class TimerService {
 
   private intervalId: any;
 
-  constructor() {}
-
   private parseTimeString(timeString: string): number {
     const [minutes, seconds] = timeString.split(':').map(Number);
     if (isNaN(minutes) || isNaN(seconds)) {
@@ -61,7 +59,7 @@ export class TimerService {
     return deadline;
   }
 
-  startTimer(time: string): void {
+  public startTimer(time: string): void {
     this.isStarted.set(true);
     this.isRunning.set(true);
     this.isFinished.set(false);
@@ -76,7 +74,7 @@ export class TimerService {
     }, 1000);
   }
 
-  stopTimer(): void {
+  public stopTimer(): void {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }

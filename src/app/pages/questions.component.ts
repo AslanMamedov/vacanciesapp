@@ -1,5 +1,4 @@
 import { CStepsComponent } from '#components';
-import { generateSteps } from '#utils/generateSteps';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,19 +11,19 @@ import { ActivatedRoute, Router } from '@angular/router';
   selector: 'app-questions',
   standalone: true,
   imports: [CStepsComponent],
-  template: `<app-c-steps [stepsSize]="stepsSize()"></app-c-steps>`,
+  template: `<app-c-steps [vacancyId]="vacancyId()"></app-c-steps>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionsComponent {
-  protected stepsSize = signal<number[]>(generateSteps());
   public activeRoute: ActivatedRoute = inject(ActivatedRoute);
+  public vacancyId = signal<number | null | string>(null);
   protected router = inject<Router>(Router);
   ngOnInit() {
     const id = this.activeRoute.snapshot.params['id'];
     if (Number.isNaN(+id)) {
       this.router.navigate([''], { relativeTo: this.activeRoute });
     } else {
-      console.log(Number(id));
+      this.vacancyId.set(id);
     }
   }
 }

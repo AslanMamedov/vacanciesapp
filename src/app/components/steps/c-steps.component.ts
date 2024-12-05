@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   input,
   signal,
 } from '@angular/core';
@@ -14,10 +15,14 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
-import { CInputRadioGroupComponent } from './formInputs/c-input-radio-group.component';
+import { CInputRadioGroupComponent } from '../formInputs/c-input-radio-group.component';
 import { IInputOptions, IQuestionData } from '#types';
 import { questionList } from '#constant';
-import { CInputTextComponent } from './formInputs';
+import { CInputTextComponent } from '../formInputs';
+import { generateSteps } from '#utils/generateSteps';
+import { CStepListComponent } from './c-step-list.component';
+import { UserDataService } from '#services/user-data.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-c-steps',
   standalone: true,
@@ -29,14 +34,10 @@ import { CInputTextComponent } from './formInputs';
     NzFormModule,
     CInputRadioGroupComponent,
     CInputTextComponent,
+    CStepListComponent,
   ],
   template: `
-    <nz-steps [nzCurrent]="current()" class="p-4 ">
-      @for(step of stepsSize(); track step) {
-      <nz-step></nz-step>
-      }
-    </nz-steps>
-
+    <app-c-step-list [current]="current()" [stepsSize]="stepsSize()" />
     <form
       nz-form
       [formGroup]="validateForm"
@@ -45,7 +46,7 @@ import { CInputTextComponent } from './formInputs';
     >
       <div class="h-[80%] bg-gray-300">
         <div class="p-4">
-          {{ question() }}
+          <div class="text-2xl mb-4">{{ question() }}</div>
           <app-c-input-radio-group
             name="option"
             [optionList]="questionOptions()"
@@ -99,10 +100,15 @@ import { CInputTextComponent } from './formInputs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CStepsComponent {
+  public vacancyId = input.required<number | null | string>({
+    alias: 'vacancyId',
+  });
   current = signal<number>(0);
-  public stepsSize = input.required<number[]>({ alias: 'stepsSize' });
+  protected stepsSize = signal<number[]>(generateSteps());
   protected validateForm: FormGroup;
   protected questionData = signal<IQuestionData>({});
+  public userDataService = inject(UserDataService);
+  protected router = inject<Router>(Router);
   public optionList: IInputOptions[] = [
     { label: 'Bəli', value: 'Yes' },
     { label: 'Xeylr', value: 'No' },
@@ -171,11 +177,23 @@ export class CStepsComponent {
     this.current.update((current) => current + 1);
   }
 
-  ngDoCheck(): void {
-    console.log(this.questionData());
-  }
-
   onSubmit(): void {
-    console.log('submit', this.validateForm.value);
+    this.questionData.update((prev) => {
+      return {
+        ...prev,
+        [this.current()]: {
+          question: this.question(),
+          option: this.validateForm.get('option')?.value,
+          right: this.rightAnswer(),
+        },
+      };
+    });
+
+    const data = {
+      vacancyId: this.vacancyId(),
+      questionList: this.questionData(),
+    };
+    this.userDataService.setVacancyData(data);
+    this.router.navigate([this.vacancyId(), 'result']);
   }
 }

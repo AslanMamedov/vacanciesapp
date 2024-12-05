@@ -13,11 +13,13 @@ import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient } from '@angular/common/http';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
+import { provideStore } from '@ngrx/store';
 
 registerLocaleData(en);
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideHttpClient(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideNzI18n(en_US),
@@ -25,5 +27,6 @@ export const appConfig: ApplicationConfig = {
     provideEnvironmentNgxMask(),
     provideAnimationsAsync(),
     provideHttpClient(),
-  ],
+    provideStore()
+],
 };

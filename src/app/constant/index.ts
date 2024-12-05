@@ -1,1 +1,2 @@
-export * from './quesionts'
+export * from './quesionts';
+export * from './phonePrefix';

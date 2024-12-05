@@ -4,7 +4,6 @@ import {
   Component,
   inject,
   input,
-  InputSignal,
 } from '@angular/core';
 import {
   ReactiveFormsModule,
@@ -59,7 +58,6 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
       </nz-form-control>
     </nz-form-item>
   `,
-  styles: ``,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CInputPhoneComponent {

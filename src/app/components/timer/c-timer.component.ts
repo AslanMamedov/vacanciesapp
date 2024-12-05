@@ -1,18 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  inject,
-} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TimerService } from './timer.service';
 
 @Component({
   selector: 'app-c-timer',
   standalone: true,
-  imports: [],
-  template: ` <div>{{ timer() }}</div> `,
-  providers: [TimerService],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  template: ` <span class="text-3xl">{{ timer() }}</span> `,
 })
 export class CTimerComponent {
   timerService = inject(TimerService);
@@ -23,13 +15,5 @@ export class CTimerComponent {
 
   ngOnInit(): void {
     this.timerService.startTimer('15:00');
-  }
-
-  onStartHandler(time: string): void {
-    this.timerService.startTimer(time);
-  }
-
-  onStopHandler(): void {
-    this.timerService.stopTimer();
   }
 }

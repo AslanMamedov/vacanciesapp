@@ -28,9 +28,9 @@ export class CConfirmModalComponent {
   protected router = inject<Router>(Router);
   showConfirm(): void {
     this.modal.confirm({
-      nzTitle: '<i>Vakansiya müraciat etmək üçun testdən keçməliziniz </i>',
+      nzTitle: '<i>Vakansiyaya müraciət etmək üçün testdən keçməlisiniz.</i>',
       nzContent:
-        '<b>Test 15 dəqiqə ərzində bitəcək və hər 1 düzgün sualın cavabı 1 bal olarag hesablanacaq</b>',
+        '<b>Test 15 dəqiqə ərzində tamamlanacaq və hər düzgün cavab 1 bal olaraq hesablanacaq.</b>',
       nzOnOk: () => this.router.navigate(['', this.vacancyId()]),
       nzOkText: 'Testə başla',
       nzCancelText: null,
