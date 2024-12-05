@@ -11,7 +11,7 @@ import { TimerService } from './timer.service';
   standalone: true,
   imports: [],
   template: ` <div>{{ timer() }}</div> `,
-
+  providers: [TimerService],
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CTimerComponent {

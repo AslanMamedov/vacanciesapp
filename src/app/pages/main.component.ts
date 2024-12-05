@@ -48,18 +48,18 @@ import { CTimerComponent } from '#components';
         </ul>
       </nz-sider>
       <nz-layout>
-        <nz-header class="bg-white !p-0 !pl-4">
-          <button
-            class="text-xl  hover:text-[#1890ff]"
-            nz-icon
-            [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
-            (click)="isCollapsed = !isCollapsed"
-          ></button>
-        </nz-header>
-        <nz-content class="h-full !m-0 overflow-y-auto ">
-          <div class="p-4 border-red-400 border">
+        <nz-header class="bg-white !p-0 !px-4">
+          <div class="flex justify-between ">
+            <button
+              class="text-xl  hover:text-[#1890ff]"
+              nz-icon
+              [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+              (click)="isCollapsed = !isCollapsed"
+            ></button>
             <app-c-timer></app-c-timer>
           </div>
+        </nz-header>
+        <nz-content class="h-full !m-0 overflow-y-auto ">
           <router-outlet></router-outlet>
         </nz-content>
       </nz-layout>

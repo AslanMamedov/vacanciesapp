@@ -8,6 +8,7 @@ export const questionList: Record<string, IQuestionList> = {
       { label: 'Minimum əlaqə ilə işləmək', value: '2' },
       { label: 'Layihədən asılı olaraq', value: '3' },
     ],
+    rightAnswer: '1',
   },
   '2': {
     question: 'Texniki bacarıqlarınızın hansı sahəsi güclüdür?',
@@ -16,6 +17,7 @@ export const questionList: Record<string, IQuestionList> = {
       { label: 'Backend inkişafı', value: '2' },
       { label: 'Tam yığın (Full stack)', value: '3' },
     ],
+    rightAnswer: '3',
   },
   '3': {
     question:
@@ -28,6 +30,7 @@ export const questionList: Record<string, IQuestionList> = {
       { label: 'Layihə üçün təqvim və büdcə tərtib etmək', value: '2' },
       { label: 'Komanda üzvləri ilə görüşmək və rolu bölüşdürmək', value: '3' },
     ],
+    rightAnswer: '3',
   },
   '4': {
     question: 'Hansı proqramlaşdırma dili ilə daha rahat işləyirsiniz?',
@@ -36,6 +39,7 @@ export const questionList: Record<string, IQuestionList> = {
       { label: 'Python', value: '2' },
       { label: 'Java', value: '3' },
     ],
+    rightAnswer: '1',
   },
   '5': {
     question: 'Çətin və mürəkkəb problemlərlə qarşılaşdıqda necə yanaşırsınız?',
@@ -44,6 +48,7 @@ export const questionList: Record<string, IQuestionList> = {
       { label: 'Komanda ilə birgə müzakirə edirəm', value: '2' },
       { label: 'Əvvəlki təcrübəmdən istifadə edirəm', value: '3' },
     ],
+    rightAnswer: '2',
   },
   '6': {
     question: 'Layihənin yekun tarixini keçirdikdə necə davranırsınız?',
@@ -52,6 +57,7 @@ export const questionList: Record<string, IQuestionList> = {
       { label: 'Müştəri ilə danışıqlar aparıram', value: '2' },
       { label: 'Layihə üzərində əlavə işləyirəm', value: '3' },
     ],
+    rightAnswer: '1',
   },
   '7': {
     question: 'Ən böyük peşəkar uğurunuz nə olub?',
@@ -63,6 +69,7 @@ export const questionList: Record<string, IQuestionList> = {
       { label: 'Komanda rəhbəri vəzifəsinə yüksəlmək', value: '2' },
       { label: 'Yeni bir texnologiyanı mükəmməl mənimsəmək', value: '3' },
     ],
+    rightAnswer: '2',
   },
   '8': {
     question: 'İş yerində hansı mühitdə daha yaxşı çalışırsınız?',
@@ -74,6 +81,7 @@ export const questionList: Record<string, IQuestionList> = {
       { label: 'Açıq fikirli və yaradıcı mühitdə', value: '2' },
       { label: 'Daha müstəqil və az nəzarət altında', value: '3' },
     ],
+    rightAnswer: '2',
   },
   '9': {
     question: 'Yenilikləri necə öyrənirsiniz?',
@@ -82,6 +90,7 @@ export const questionList: Record<string, IQuestionList> = {
       { label: 'Təcrübə yolu ilə öyrənirəm', value: '2' },
       { label: 'Komanda üzvlərindən məsləhət alıram', value: '3' },
     ],
+    rightAnswer: '3',
   },
   '10': {
     question: 'İşdə stress və təzyiq altında necə işləyirsiniz?',
@@ -96,6 +105,7 @@ export const questionList: Record<string, IQuestionList> = {
         value: '3',
       },
     ],
+    rightAnswer: '1',
   },
   '11': {
     question: 'Komanda daxilində münaqişə olduqda necə davranırsınız?',
@@ -107,6 +117,7 @@ export const questionList: Record<string, IQuestionList> = {
         value: '3',
       },
     ],
+    rightAnswer: '2',
   },
   '12': {
     question:
@@ -124,6 +135,7 @@ export const questionList: Record<string, IQuestionList> = {
         value: '3',
       },
     ],
+    rightAnswer: '3',
   },
   '13': {
     question:
@@ -133,6 +145,7 @@ export const questionList: Record<string, IQuestionList> = {
       { label: 'Tədris materiallarından istifadə edirəm', value: '2' },
       { label: 'Dərslər və kurslarla təkmilləşməyi seçirəm', value: '3' },
     ],
+    rightAnswer: '1',
   },
   '14': {
     question: 'Yaxşı lider olmaq üçün nə qədər vacib olan keyfiyyətlər var?',
@@ -141,6 +154,7 @@ export const questionList: Record<string, IQuestionList> = {
       { label: 'Komandanı dinləmək və hörmətlə yanaşmaq', value: '2' },
       { label: 'İrəliləmək üçün doğru qərarlar vermək', value: '3' },
     ],
+    rightAnswer: '1',
   },
   '15': {
     question: 'Bir layihə tamamlandıqdan sonra necə qiymətləndirirsiniz?',
@@ -153,5 +167,6 @@ export const questionList: Record<string, IQuestionList> = {
         value: '3',
       },
     ],
+    rightAnswer: '1',
   },
 };

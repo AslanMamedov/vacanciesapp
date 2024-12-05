@@ -122,6 +122,10 @@ export class CStepsComponent {
     return questionList[this.current() + 1]?.question;
   }
 
+  rightAnswer() {
+    return questionList[this.current() + 1].rightAnswer;
+  }
+
   questionOptions() {
     return questionList[this.current() + 1]?.options || this.optionList;
   }
@@ -155,6 +159,7 @@ export class CStepsComponent {
           [this.current()]: {
             question: this.question(),
             option: this.validateForm.get('option')?.value,
+            right: this.rightAnswer(),
           },
         };
       });

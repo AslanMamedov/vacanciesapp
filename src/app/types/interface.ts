@@ -5,12 +5,14 @@ export interface IInputOptions {
 
 export interface IQuestionList {
   question: string;
-  options?: IInputOptions[];
+  options: IInputOptions[];
+  rightAnswer: string;
 }
 
 export interface IQuestionData {
   [key: string]: {
     question: string;
     option: string;
+    right: string;
   };
 }
