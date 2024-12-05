@@ -24,8 +24,8 @@ import { NzInputModule } from 'ng-zorro-antd/input';
     },
   ],
   template: `
-    <nz-form-item>
-      <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorText()">
+    <nz-form-item class="">
+      <nz-form-control [nzErrorTip]="errorText()" class="">
         <nz-form-label [nzSm]="6" [nzXs]="24" [nzFor]="name()" nzRequired
           >{{ label() }}
         </nz-form-label>
@@ -41,15 +41,17 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CInputTextComponent {
-  public name: InputSignal<string> = input.required({ alias: 'name' });
-  public errorText: InputSignal<string> = input.required({
+  public name = input.required<string>({ alias: 'name' });
+  public errorText = input.required<string>({
     alias: 'errorText',
   });
-  public placeholder: InputSignal<string> = input.required({
+  public placeholder = input.required<string>({
     alias: 'placeholder',
   });
-  public label: InputSignal<string> = input.required({ alias: 'label' });
-  public parentContainer: ControlContainer = inject(ControlContainer);
+  public label = input.required<string>({
+    alias: 'label',
+  });
+  public parentContainer = inject<ControlContainer>(ControlContainer);
   public get parentFormGroup(): FormGroup {
     return this.parentContainer.control as FormGroup;
   }

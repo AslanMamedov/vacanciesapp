@@ -1,12 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { ApplayFormComponent, CDrawerComponent } from '#components';
 
 @Component({
   selector: 'app-vacancies',
@@ -23,11 +29,13 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
     NzTypographyModule,
     NzButtonModule,
     NzIconModule,
+    ApplayFormComponent,
+    CDrawerComponent,
   ],
   template: `
     @for(vacancy of vacancyLists; track vacancy.id) {
 
-    <nz-card class="w-full  h-[160px] mt-2" [nzLoading]="loading">
+    <nz-card class="w-full  h-[160px] mt-2" [nzLoading]="loading()">
       <div class="flex justify-between  h-[100px]  flex-1 gap-2">
         <div class="flex flex-col items-start flex-1 justify-between">
           <h5 nz-typography>{{ vacancy.title }}</h5>
@@ -55,16 +63,26 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
         </button>
       </div>
     </nz-card>
+
+    <app-c-drawer
+      [isVisible]="isVisible()"
+      (onCloseHandler)="onCloseHandler($event)"
+    >
+      <app-applay-form
+        [id]="vacancyId()"
+        [isVisible]="isVisible()"
+      ></app-applay-form>
+    </app-c-drawer>
     }
   `,
   styles: ``,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VacanciesComponent {
-  loading = !true;
-  isVisible = false;
-  isOkLoading = false;
-  router: Router = inject(Router);
+  public loading = signal<boolean>(false);
+  public isVisible = signal<boolean>(false);
+  protected router = inject<Router>(Router);
+  public vacancyId = signal<number | string | null>(null);
   vacancyLists = [
     {
       id: 1,
@@ -80,7 +98,13 @@ export class VacanciesComponent {
     },
   ];
 
+  onCloseHandler($event: boolean): void {
+    this.isVisible.set($event);
+  }
+
   applayVacancy(id: number): void {
-    this.router.navigate(['/', id]);
+    this.isVisible.set(true);
+    this.vacancyId.set(id);
+
   }
 }

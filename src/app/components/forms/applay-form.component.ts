@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  input,
+} from '@angular/core';
 import {
   FormGroup,
   NonNullableFormBuilder,
@@ -23,12 +28,7 @@ import { CInputPhoneComponent, CInputTextComponent } from '#components';
     CInputPhoneComponent,
   ],
   template: `
-    <form
-      nz-form
-      [formGroup]="validateForm"
-      (ngSubmit)="submitForm()"
-      class="w-[600px] m-4"
-    >
+    <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()" class="">
       <app-c-input-text
         name="name"
         errorText="Adını daxil edin!"
@@ -57,8 +57,10 @@ import { CInputPhoneComponent, CInputTextComponent } from '#components';
       />
 
       <nz-form-item nz-row class="applay-area ">
-        <nz-form-control [nzSpan]="14" [nzOffset]="6">
-          <button type="submit" nz-button nzType="primary">Təstiq et</button>
+        <nz-form-control>
+          <button type="submit" class="w-full" nz-button nzType="primary">
+            Davam et
+          </button>
         </nz-form-control>
       </nz-form-item>
     </form>
@@ -67,6 +69,12 @@ import { CInputPhoneComponent, CInputTextComponent } from '#components';
 })
 export class ApplayFormComponent {
   private destroy$ = new Subject<void>();
+  public vacancyId = input.required<string | number | null>({
+    alias: 'id',
+  });
+  public isVisible = input.required<boolean>({
+    alias: 'isVisible',
+  });
   protected validateForm: FormGroup;
   public phonePrefixList: NumberList[] = ['055', '050', '070'];
   constructor(private fb: NonNullableFormBuilder) {
@@ -79,9 +87,22 @@ export class ApplayFormComponent {
     });
   }
 
+  effect = effect(
+    () => {
+      if (this.isVisible()) {
+        this.validateForm.reset();
+      }
+    },
+    { allowSignalWrites: true }
+  );
+
   protected submitForm(): void {
     if (this.validateForm.valid) {
-      console.log('submit', this.validateForm.value);
+      const vacancyData = {
+        ...this.validateForm.value,
+        id: this.vacancyId(),
+      };
+      console.log('submit', vacancyData);
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
         if (control.invalid) {
@@ -91,6 +112,8 @@ export class ApplayFormComponent {
       });
     }
   }
+
+  ngOnChanges(): void {}
 
   public ngOnDestroy(): void {
     this.destroy$.next();

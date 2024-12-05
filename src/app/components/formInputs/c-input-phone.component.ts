@@ -36,7 +36,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   ],
   template: `
     <nz-form-item>
-      <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorText()">
+      <nz-form-control [nzErrorTip]="errorText()">
         <nz-form-label [nzSm]="6" [nzXs]="24" [nzFor]="name()" nzRequired>{{
           label()
         }}</nz-form-label>
@@ -63,18 +63,18 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CInputPhoneComponent {
-  public name: InputSignal<string> = input.required({ alias: 'name' });
-  public errorText: InputSignal<string> = input.required({
+  public name = input.required<string>({ alias: 'name' });
+  public errorText = input.required<string>({
     alias: 'errorText',
   });
-  public placeholder: InputSignal<string> = input.required({
+  public placeholder = input.required<string>({
     alias: 'placeholder',
   });
-  public label: InputSignal<string> = input.required({ alias: 'label' });
-  public mask: InputSignal<string> = input.required({ alias: 'mask' });
-  public prefixList: InputSignal<NumberList[]> = input.required();
+  public label = input.required<string>({ alias: 'label' });
+  public mask = input.required<string>({ alias: 'mask' });
+  public prefixList = input.required<NumberList[]>();
 
-  public parentContainer: ControlContainer = inject(ControlContainer);
+  public parentContainer = inject<ControlContainer>(ControlContainer);
   public get parentFormGroup(): FormGroup {
     return this.parentContainer.control as FormGroup;
   }
