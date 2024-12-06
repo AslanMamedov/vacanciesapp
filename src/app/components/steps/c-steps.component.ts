@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  effect,
   inject,
   input,
   signal,
@@ -17,12 +18,16 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { CInputRadioGroupComponent } from '../formInputs/c-input-radio-group.component';
 import { IInputOptions, IQuestionData } from '#types';
-import { questionList } from '#constant';
+import { questionList, questionListLength } from '#constant';
 import { CInputTextComponent } from '../formInputs';
 import { generateSteps } from '#utils/generateSteps';
 import { CStepListComponent } from './c-step-list.component';
 import { UserDataService } from '#services/user-data.service';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { IUserState, UserDataActions } from '#store';
+import { LocalStorageService } from '#services';
+import { timerStartedSelector } from '#store/timer';
 @Component({
   selector: 'app-c-steps',
   standalone: true,
@@ -89,6 +94,7 @@ import { Router } from '@angular/router';
           nz-button
           nzType="primary"
           type="submit"
+          [disabled]="isDisabled()"
         >
           Tamamla
         </button>
@@ -104,10 +110,11 @@ export class CStepsComponent {
     alias: 'vacancyId',
   });
   current = signal<number>(0);
-  protected stepsSize = signal<number[]>(generateSteps());
+  protected stepsSize = signal<number[]>(generateSteps(questionListLength));
   protected validateForm: FormGroup;
   protected questionData = signal<IQuestionData>({});
-  public userDataService = inject(UserDataService);
+  public store = inject(Store);
+  public localStorage = inject(LocalStorageService);
   protected router = inject<Router>(Router);
   public optionList: IInputOptions[] = [
     { label: 'Bəli', value: 'Yes' },
@@ -157,6 +164,13 @@ export class CStepsComponent {
 
     this.current.update((current) => current - 1);
   }
+
+  optionText() {
+    return this.questionOptions().find(
+      (item) => item.value === this.validateForm.get('option')?.value
+    )?.label;
+  }
+
   protected next(): void {
     if (!this.questionData()[this.current()]) {
       this.questionData.update((prev) => {
@@ -165,6 +179,7 @@ export class CStepsComponent {
           [this.current()]: {
             question: this.question(),
             option: this.validateForm.get('option')?.value,
+            optionText: this.optionText(),
             right: this.rightAnswer(),
           },
         };
@@ -177,6 +192,16 @@ export class CStepsComponent {
     this.current.update((current) => current + 1);
   }
 
+  timeFinishedEffect = effect(() => {
+    this.store.select(timerStartedSelector).subscribe((result) => {
+      if (!result) {
+        this.store.dispatch(
+          UserDataActions.addUserQuestions({ payload: this.questionData() })
+        );
+      }
+    });
+  }, {});
+
   onSubmit(): void {
     this.questionData.update((prev) => {
       return {
@@ -184,16 +209,17 @@ export class CStepsComponent {
         [this.current()]: {
           question: this.question(),
           option: this.validateForm.get('option')?.value,
+          optionText: this.optionText(),
           right: this.rightAnswer(),
         },
       };
     });
 
-    const data = {
-      vacancyId: this.vacancyId(),
-      questionList: this.questionData(),
-    };
-    this.userDataService.setVacancyData(data);
+    this.store.dispatch(
+      UserDataActions.addUserQuestions({ payload: this.questionData() })
+    );
+    this.localStorage.setItem('questionList', this.questionData());
+
     this.router.navigate([this.vacancyId(), 'result']);
   }
 }

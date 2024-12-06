@@ -23,7 +23,10 @@ import {
   CInputTextComponent,
 } from '#components';
 import { phonePrefix } from '#constant';
-import { UserDataService } from '../../services/user-data.service';
+import { IUserData } from '#types';
+import { Store } from '@ngrx/store';
+import { UserDataActions } from '#store';
+import { TimerActions } from '#store/timer';
 
 @Component({
   selector: 'app-applay-form',
@@ -94,7 +97,7 @@ export class ApplayFormComponent {
   protected validateForm: FormGroup;
   public phonePrefixList: NumberList[] = phonePrefix;
 
-  public userDataService = inject(UserDataService);
+  public store = inject(Store);
 
   constructor(private fb: NonNullableFormBuilder) {
     this.validateForm = this.fb.group({
@@ -121,12 +124,15 @@ export class ApplayFormComponent {
 
   protected submitForm(): void {
     if (this.validateForm.valid) {
-      const vacancyData = {
+      const vacancyData: IUserData = {
         ...this.validateForm.value,
         id: this.vacancyId(),
       };
-      this.userDataService.setUserData(vacancyData);
+
       this.showConfirm.set(true);
+      this.store.dispatch(
+        UserDataActions.addUserInfo({ payload: vacancyData })
+      );
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
         if (control.invalid) {

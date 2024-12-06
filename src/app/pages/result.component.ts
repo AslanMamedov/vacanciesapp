@@ -1,18 +1,36 @@
-import { UserDataService } from '#services/user-data.service';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { CTableComponent } from '#components';
+import { questionList } from '#constant';
+import { userQuestionsSelector } from '#store';
+import { IQuestion, IQuestionData } from '#types';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-result',
   standalone: true,
-  imports: [],
-  template: ` <p>result works!</p> `,
+  imports: [CTableComponent],
+  template: ` <app-c-table [data]="userQuestionsData()"></app-c-table> `,
   styles: ``,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResultComponent {
-  public userDataService = inject(UserDataService);
+  public store = inject(Store);
+  public userQuestionsData = signal<IQuestion[]>([]);
+  questionList = questionList;
 
   public ngOnInit(): void {
-    console.log(this.userDataService.userDatra);
+    this.store
+      .select(userQuestionsSelector)
+
+      .subscribe((result) => {
+        const data = Object.values(result || []);
+ 
+        this.userQuestionsData.set(data);
+      });
   }
 }

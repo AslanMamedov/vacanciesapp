@@ -170,3 +170,5 @@ export const questionList: Record<string, IQuestionList> = {
     rightAnswer: '1',
   },
 };
+
+export const questionListLength = Object.keys(questionList).length;

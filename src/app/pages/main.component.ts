@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -10,6 +10,10 @@ import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { Router, RouterOutlet } from '@angular/router';
 import { CTimerComponent } from '#components';
+import { Store } from '@ngrx/store';
+import { TimerActions, timerStartedSelector } from '#store/timer';
+import { questionListLength, routeList } from '#constant';
+import { userQuestionsRightCountSelector } from '#store';
 
 @Component({
   selector: 'app-main',
@@ -53,11 +57,14 @@ import { CTimerComponent } from '#components';
             <button
               class="text-xl  hover:text-[#1890ff]"
               nz-icon
-              [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
-              (click)="isCollapsed = !isCollapsed"
+              [nzType]="isCollapsed() ? 'menu-unfold' : 'menu-fold'"
+              (click)="toggleCollapsed()"
             ></button>
             @if(isStartTest()) {
             <app-c-timer></app-c-timer>
+            } @if(!isStartTest()) {
+            <div>{{ rightsCount() }}</div>
+
             }
           </div>
         </nz-header>
@@ -69,37 +76,55 @@ import { CTimerComponent } from '#components';
   `,
 })
 export class MainComponent {
-  isCollapsed = false;
-  loading = !true;
-  currentUrl: string = '';
+  loading = signal<boolean>(!false);
+  isCollapsed = signal<boolean>(false);
   isStartTest = signal<boolean>(false);
-  routeList = [
-    {
-      text: 'Elanlar',
-      link: '/',
-      icon: 'notification',
-    },
-    {
-      text: 'Şirkətlər',
-      link: '/company',
-      icon: 'profile',
-    },
-  ];
+  currentUrl = signal<string>('');
+  questionRightCount = signal<number>(0);
+  routeList = routeList;
   router: Router = inject(Router);
+  store = inject(Store);
 
   ngOnInit() {
-    this.currentUrl = this.router.url;
+    this.currentUrl.set(this.router.url);
   }
 
+  timerEffect = effect(
+    () => {
+      this.store.select(timerStartedSelector).subscribe((result) => {
+        this.isStartTest.set(result);
+      });
+    },
+    {
+      allowSignalWrites: true,
+    }
+  );
+
+  testFinishedEffect = effect(
+    () => {
+      this.store.select(userQuestionsRightCountSelector).subscribe((result) => {
+        this.questionRightCount.set(result || 0);
+      });
+    },
+    {
+      allowSignalWrites: true,
+    }
+  );
+
+  rightsCount = computed(
+    () => `${this.questionRightCount()} / ${questionListLength}`
+  );
+
   selectedRoute(link: string): boolean {
-    return this.currentUrl === link;
+    return this.currentUrl() === link;
   }
 
   redirectRoute(link: string): void {
+    this.store.dispatch(TimerActions.timerFinished());
     this.router.navigate([link]);
   }
 
   toggleCollapsed(): void {
-    this.isCollapsed = !this.isCollapsed;
+    this.isCollapsed.update((prev) => !prev);
   }
 }
