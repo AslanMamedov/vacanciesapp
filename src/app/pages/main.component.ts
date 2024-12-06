@@ -62,9 +62,8 @@ import { userQuestionsRightCountSelector } from '#store';
             ></button>
             @if(isStartTest()) {
             <app-c-timer></app-c-timer>
-            } @if(!isStartTest()) {
+            } @if(isShowCount()) {
             <div>{{ rightsCount() }}</div>
-
             }
           </div>
         </nz-header>
@@ -76,14 +75,15 @@ import { userQuestionsRightCountSelector } from '#store';
   `,
 })
 export class MainComponent {
-  loading = signal<boolean>(!false);
-  isCollapsed = signal<boolean>(false);
-  isStartTest = signal<boolean>(false);
-  currentUrl = signal<string>('');
-  questionRightCount = signal<number>(0);
-  routeList = routeList;
-  router: Router = inject(Router);
-  store = inject(Store);
+  public loading = signal<boolean>(!false);
+  public isCollapsed = signal<boolean>(false);
+  public isStartTest = signal<boolean>(false);
+  public isShowCount = signal<boolean>(false);
+  public currentUrl = signal<string>('');
+  public questionRightCount = signal<number>(0);
+  public routeList = routeList;
+  protected router: Router = inject(Router);
+  protected store = inject(Store);
 
   ngOnInit() {
     this.currentUrl.set(this.router.url);

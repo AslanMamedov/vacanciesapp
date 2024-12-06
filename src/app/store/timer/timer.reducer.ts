@@ -9,7 +9,6 @@ export interface TimerState {
 
 export const initialState: TimerState = {
   questinIsStarted: false,
-
   questinIsReset: false,
 };
 

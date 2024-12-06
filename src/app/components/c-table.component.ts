@@ -1,5 +1,12 @@
+import { LocalStorageService } from '#services';
 import { IQuestion, IQuestionData } from '#types';
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzTableModule } from 'ng-zorro-antd/table';
 
@@ -15,7 +22,11 @@ interface Person {
   standalone: true,
   imports: [NzTableModule, NzDividerModule],
   template: `
-    <nz-table #basicTable [nzData]="questionList()" nzShowPagination="false">
+    <nz-table
+      #basicTable
+      [nzData]="questionListData()"
+      nzShowPagination="false"
+    >
       <thead>
         <tr>
           <th>№</th>
@@ -26,7 +37,8 @@ interface Person {
         </tr>
       </thead>
       <tbody>
-        @for (question of questionList(); track question; let idx = $index) {
+        @for (question of questionListData(); track question; let idx = $index)
+        {
         <tr>
           <td>{{ idx + 1 }}</td>
           <td>{{ question.question }}</td>
@@ -38,13 +50,22 @@ interface Person {
       </tbody>
     </nz-table>
   `,
-  styles: ``,
+
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CTableComponent {
-  questionList = input.required<IQuestion[]>({ alias: 'data' });
+  public questionList = input.required<IQuestion[]>({ alias: 'data' });
+  protected localStorage = inject(LocalStorageService);
+
+  public questionListData = computed(() => {
+    if (!this.questionList()) {
+      return this.questionList();
+    } else {
+      return Object.values(this.localStorage.getItem('questionList') || {});
+    }
+  });
 
   ngOnInit() {
-    console.log('qqq', this.questionList());
+    console.log(this.questionListData());
   }
 }

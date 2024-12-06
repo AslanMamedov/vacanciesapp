@@ -38,7 +38,7 @@ export class CTimerComponent {
   runnigTimerEffect = effect(
     () => {
       this.store.select(timerStartedSelector).subscribe((result) => {
-      
+
         this.deadline.set(Date.now() + 1 * 60 * 1000);
         this.isTimerRunning.set(result);
       });
