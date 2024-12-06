@@ -23,6 +23,7 @@ interface Person {
   imports: [NzTableModule, NzDividerModule],
   template: `
     <nz-table
+      [nzScroll]="{ x: '1150px', y: '500px' }"
       #basicTable
       [nzData]="questionListData()"
       nzShowPagination="false"

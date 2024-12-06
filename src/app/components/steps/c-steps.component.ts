@@ -22,11 +22,10 @@ import { questionList, questionListLength } from '#constant';
 import { CInputTextComponent } from '../formInputs';
 import { generateSteps } from '#utils/generateSteps';
 import { CStepListComponent } from './c-step-list.component';
-import { UserDataService } from '#services/user-data.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
-  IUserState,
+
   UserDataActions,
   userQuestionsRightCountSelector,
   userQuestionsSelector,
