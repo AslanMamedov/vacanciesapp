@@ -65,7 +65,5 @@ export class CTableComponent {
     }
   });
 
-  ngOnInit() {
-    console.log(this.questionListData());
-  }
+  ngOnInit() {}
 }

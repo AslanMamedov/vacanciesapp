@@ -14,6 +14,7 @@ import { Store } from '@ngrx/store';
 import { TimerActions, timerStartedSelector } from '#store/timer';
 import { questionListLength, routeList } from '#constant';
 import { userQuestionsRightCountSelector } from '#store';
+import { LocalStorageService } from '#services';
 
 @Component({
   selector: 'app-main',
@@ -62,9 +63,14 @@ import { userQuestionsRightCountSelector } from '#store';
             ></button>
             @if(isStartTest()) {
             <app-c-timer></app-c-timer>
-            } @if(isShowCount()) {
-            <div>{{ rightsCount() }}</div>
             }
+            <div>
+              @if(isShowCount()) {
+              <div class="text-[#1890ff] font-bold text-3xl">
+                {{ rightsCount() }}
+              </div>
+              }
+            </div>
           </div>
         </nz-header>
         <nz-content class="h-full !m-0 overflow-y-auto ">
@@ -84,9 +90,15 @@ export class MainComponent {
   public routeList = routeList;
   protected router: Router = inject(Router);
   protected store = inject(Store);
-
+  protected localStorage = inject(LocalStorageService);
   ngOnInit() {
     this.currentUrl.set(this.router.url);
+    this.isShowCount.set(false);
+
+    const count = this.localStorage.getItem('count');
+    if (count) {
+      this.isShowCount.set(true);
+    }
   }
 
   timerEffect = effect(
@@ -104,6 +116,9 @@ export class MainComponent {
     () => {
       this.store.select(userQuestionsRightCountSelector).subscribe((result) => {
         this.questionRightCount.set(result || 0);
+        if (result) {
+          this.isShowCount.set(true);
+        }
       });
     },
     {
@@ -111,9 +126,15 @@ export class MainComponent {
     }
   );
 
-  rightsCount = computed(
-    () => `${this.questionRightCount()} / ${questionListLength}`
-  );
+  rightsCount = computed(() => {
+    const count = this.localStorage.getItem('count');
+
+    if (count) {
+      return `${count} / ${questionListLength}`;
+    } else {
+      return `${this.questionRightCount()} / ${questionListLength}`;
+    }
+  });
 
   selectedRoute(link: string): boolean {
     return this.currentUrl() === link;
@@ -122,6 +143,7 @@ export class MainComponent {
   redirectRoute(link: string): void {
     this.store.dispatch(TimerActions.timerFinished());
     this.router.navigate([link]);
+    this.isShowCount.set(false);
   }
 
   toggleCollapsed(): void {

@@ -25,7 +25,12 @@ import { CStepListComponent } from './c-step-list.component';
 import { UserDataService } from '#services/user-data.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { IUserState, UserDataActions, userQuestionsSelector } from '#store';
+import {
+  IUserState,
+  UserDataActions,
+  userQuestionsRightCountSelector,
+  userQuestionsSelector,
+} from '#store';
 import { LocalStorageService } from '#services';
 import { TimerActions, timerStartedSelector } from '#store/timer';
 @Component({
@@ -201,6 +206,11 @@ export class CStepsComponent {
         this.store.select(userQuestionsSelector).subscribe((result) => {
           this.localStorage.setItem('questionList', result);
         });
+        this.store
+          .select(userQuestionsRightCountSelector)
+          .subscribe((result) => {
+            this.localStorage.setItem('count', result);
+          });
       }
     });
   }, {});
@@ -224,6 +234,9 @@ export class CStepsComponent {
     this.store.dispatch(TimerActions.timerFinished());
     this.store.select(userQuestionsSelector).subscribe((result) => {
       this.localStorage.setItem('questionList', result);
+    });
+    this.store.select(userQuestionsRightCountSelector).subscribe((result) => {
+      this.localStorage.setItem('count', result);
     });
 
     this.router.navigate([this.vacancyId(), 'result']);
