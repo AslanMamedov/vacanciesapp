@@ -1,6 +1,13 @@
+import { TextComponent } from '#components/form_inputs';
+import { ControlComponent } from '#components/form_inputs/control.component';
+import { LabelComponent } from '#components/form_inputs/label.component';
+import { IUserData, NumberList } from '#types';
 import {
+  afterNextRender,
+  afterRender,
   ChangeDetectionStrategy,
   Component,
+  DoCheck,
   effect,
   inject,
   input,
@@ -12,61 +19,64 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subject } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
-
-import { NumberList } from '#types/union';
-import {
-  CConfirmModalComponent,
-  CInputPhoneComponent,
-  CInputTextComponent,
-} from '#components';
-import { phonePrefix } from '#constant';
-import { IUserData } from '#types';
-import { Store } from '@ngrx/store';
-import { UserDataActions } from '#store';
-import { TimerActions } from '#store/timer';
+import { Subject } from 'rxjs';
+import { SelectComponent } from '../form_inputs/select.component';
+import { DrawerService } from '#services';
+import { phonePrefix } from '#constants';
+import { ConfirmService } from '#services/confirm.service';
 
 @Component({
-  selector: 'app-applay-form',
+  selector: 'app-applay',
   standalone: true,
   imports: [
     ReactiveFormsModule,
     NzButtonModule,
     NzFormModule,
-    CInputTextComponent,
-    CInputPhoneComponent,
-    CConfirmModalComponent,
+    TextComponent,
+    SelectComponent,
+    LabelComponent,
   ],
   template: `
     <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()" class="">
-      <app-c-input-text
-        name="name"
-        errorText="Adını daxil edin!"
-        placeholder="Ad"
-        label="Ad"
-      />
-      <app-c-input-text
+      <app-text name="name" errorText="Adını daxil edin!" placeholder="Ad">
+        <app-label ngProjectAs="label" label="Ad" name="name"></app-label>
+      </app-text>
+      <app-text
         name="surname"
         errorText="Soyadını daxil edin!"
         placeholder="Soyad"
-        label="Soyad"
-      />
-      <app-c-input-text
+      >
+        <app-label ngProjectAs="label" label="Soyad" name="surname"></app-label>
+      </app-text>
+      <app-text
         name="email"
         errorText="E-mail daxil edin!"
         placeholder="E-mail"
-        label="E-mail"
-      />
-      <app-c-input-phone
+      >
+        <app-label ngProjectAs="label" label="E-mail" name="email"></app-label>
+      </app-text>
+
+      <app-text
         errorText="Telefon daxil edin!"
-        label="Telefon"
         mask="000-00-00"
         name="phoneNumber"
         placeholder="Telefon"
-        [prefixList]="phonePrefixList"
-      />
+        [withSelect]="true"
+      >
+        <app-label
+          ngProjectAs="label"
+          label="Telefon"
+          name="phoneNumber"
+        ></app-label>
+
+        <app-select
+          ngProjectAs="component"
+          [name]="'phoneNumberPrefix'"
+          [optionList]="phonePrefixList"
+        ></app-select>
+      </app-text>
 
       <nz-form-item nz-row class="applay-area ">
         <nz-form-control>
@@ -76,29 +86,16 @@ import { TimerActions } from '#store/timer';
         </nz-form-control>
       </nz-form-item>
     </form>
-    <app-c-confirm-modal
-      [isShowConfirm]="showConfirm()"
-      [id]="vacancyId()"
-      (onClose)="onClose($event)"
-    ></app-c-confirm-modal>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApplayFormComponent {
+export class ApplayComponent {
   private destroy$ = new Subject<void>();
-  public vacancyId = input.required<string | number | null>({
-    alias: 'id',
-  });
-  public isVisible = input.required<boolean>({
-    alias: 'isVisible',
-  });
-  public showConfirm = signal<boolean>(false);
 
   protected validateForm: FormGroup;
   public phonePrefixList: NumberList[] = phonePrefix;
-
-  public store = inject(Store);
-
+  protected drawerService = inject(DrawerService);
+  protected confirmService = inject(ConfirmService);
   constructor(private fb: NonNullableFormBuilder) {
     this.validateForm = this.fb.group({
       surname: this.fb.control('', [Validators.required]),
@@ -109,30 +106,31 @@ export class ApplayFormComponent {
     });
   }
 
-  onClose($event: boolean): void {
-    this.showConfirm.set($event);
-  }
-
-  effect = effect(
-    () => {
-      if (this.isVisible()) {
+  ngOnInit(): void {
+    this.drawerService.dreawerIsVisible.subscribe((isVisible) => {
+      if (!isVisible) {
         this.validateForm.reset();
       }
-    },
-    { allowSignalWrites: true }
-  );
+    });
+  }
+
+  onClose(): void {
+    // this.showConfirm.set($event);
+  }
 
   protected submitForm(): void {
     if (this.validateForm.valid) {
       const vacancyData: IUserData = {
         ...this.validateForm.value,
-        id: this.vacancyId(),
+        id: '1',
       };
+      this.confirmService.onIsVisibleHanler();
 
-      this.showConfirm.set(true);
-      this.store.dispatch(
-        UserDataActions.addUserInfo({ payload: vacancyData })
-      );
+
+      // this.store.dispatch(
+      //   UserDataActions.addUserInfo({ payload: vacancyData })
+      // );
+      console.log(vacancyData);
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
         if (control.invalid) {

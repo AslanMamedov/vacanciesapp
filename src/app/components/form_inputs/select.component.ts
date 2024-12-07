@@ -1,3 +1,4 @@
+import { NumberList } from '#types';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,12 +11,12 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 @Component({
-  selector: 'app-c-input-text',
+  selector: 'app-select',
   standalone: true,
-  imports: [ReactiveFormsModule, NzFormModule, NzInputModule],
+  imports: [ReactiveFormsModule, NzFormModule, NzSelectModule],
   viewProviders: [
     {
       provide: ControlContainer,
@@ -23,35 +24,21 @@ import { NzInputModule } from 'ng-zorro-antd/input';
     },
   ],
   template: `
-    <nz-form-item class="">
-      <nz-form-control [nzErrorTip]="errorText()">
-        <nz-form-label [nzSm]="6" [nzXs]="24" [nzFor]="name()" nzRequired
-          >{{ label() }}
-        </nz-form-label>
-        <input
-          nz-input
-          [type]="type() || 'text'"
-          [id]="name()"
-          [formControlName]="name()"
-          [placeholder]="placeholder()"
-        />
-      </nz-form-control>
-    </nz-form-item>
+    <nz-form-control>
+      <nz-select [formControlName]="name()" class="!w-[80px]">
+        @for(option of optionList(); track option) {
+        <nz-option [nzLabel]="option" [nzValue]="option"></nz-option>
+        }
+      </nz-select>
+    </nz-form-control>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CInputTextComponent {
+export class SelectComponent {
   public name = input.required<string>({ alias: 'name' });
-  public type = input<string>();
-  public errorText = input.required<string>({
-    alias: 'errorText',
-  });
-  public placeholder = input.required<string>({
-    alias: 'placeholder',
-  });
-  public label = input.required<string>({
-    alias: 'label',
-  });
+
+  public optionList = input<NumberList[]>();
+
   public parentContainer = inject<ControlContainer>(ControlContainer);
   public get parentFormGroup(): FormGroup {
     return this.parentContainer.control as FormGroup;

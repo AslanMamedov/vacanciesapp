@@ -16,26 +16,20 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'company',
-        pathMatch: 'full',
-        title: 'Şirkətlər',
-        loadComponent: () =>
-          import('./pages/company.component').then((m) => m.CompanyComponent),
-      },
-      {
         path: ':id',
+        title: 'Elan',
         loadComponent: () =>
           import('./pages/questions.component').then(
             (m) => m.QuestionsComponent
           ),
       },
-      {
-        path: ':id/result',
-        pathMatch: 'full',
-        title: 'Nəticə',
-        loadComponent: () =>
-          import('./pages/result.component').then((m) => m.ResultComponent),
-      },
     ],
+  },
+  {
+    path: '**',
+    title: '404',
+    pathMatch: 'full',
+    loadComponent: () =>
+      import('./pages/notfound.component').then((m) => m.NotfoundComponent),
   },
 ];

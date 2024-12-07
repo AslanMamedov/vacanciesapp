@@ -1,8 +1,6 @@
-export * from './formInputs';
-export * from './forms';
-//
-export * from './c-confirm-modal.component';
-export * from './steps/c-steps.component';
-export * from './c-timer.component';
-export * from './c-drawer.component';
-export * from './c-table.component';
+export * from './vacancy-card.component';
+export * from './drawer.component';
+export * from './confirm.component';
+// -- Folders
+export * from './form_inputs';
+// export * from './forms';

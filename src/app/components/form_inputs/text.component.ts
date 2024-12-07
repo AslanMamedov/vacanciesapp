@@ -1,9 +1,11 @@
-import { NumberList } from '#types/union';
+import { NumberList } from '#types';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   input,
+  TemplateRef,
+  viewChild,
 } from '@angular/core';
 import {
   ReactiveFormsModule,
@@ -17,7 +19,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
-  selector: 'app-c-input-phone',
+  selector: 'app-text',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -36,21 +38,18 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   template: `
     <nz-form-item>
       <nz-form-control [nzErrorTip]="errorText()">
-        <nz-form-label [nzSm]="6" [nzXs]="24" [nzFor]="name()" nzRequired>{{
-          label()
-        }}</nz-form-label>
-        <nz-input-group [nzAddOnBefore]="addOnBeforeTemplate">
+        <ng-content select="label"></ng-content>
+        <nz-input-group [nzAddOnBefore]="isPrefix()">
+          @if(withSelect()) {
           <ng-template #addOnBeforeTemplate>
-            <nz-select formControlName="phoneNumberPrefix" class="!w-[80px]">
-              @for(prefix of prefixList(); track prefix ) {
-              <nz-option [nzLabel]="prefix" [nzValue]="prefix"></nz-option>
-              }
-            </nz-select>
+            <ng-content select="component"></ng-content>
           </ng-template>
+          }
           <input
             [formControlName]="name()"
             [id]="name()"
             nz-input
+            [placeholder]="placeholder()"
             type="text"
             [mask]="mask()"
           />
@@ -60,21 +59,22 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CInputPhoneComponent {
+export class TextComponent {
   public name = input.required<string>({ alias: 'name' });
-  public errorText = input.required<string>({
-    alias: 'errorText',
-  });
+  public errorText = input<string>();
   public placeholder = input.required<string>({
     alias: 'placeholder',
   });
-  public label = input.required<string>({ alias: 'label' });
-  public mask = input.required<string>({ alias: 'mask' });
-  public prefixList = input.required<NumberList[]>();
-
+  public mask = input<string>();
+  public withSelect = input<boolean>();
+  addOnBeforeTemplate = viewChild('addOnBeforeTemplate', { read: TemplateRef });
   public parentContainer = inject<ControlContainer>(ControlContainer);
   public get parentFormGroup(): FormGroup {
     return this.parentContainer.control as FormGroup;
+  }
+
+  isPrefix() {
+    return this.withSelect() ? this.addOnBeforeTemplate() : '';
   }
 
   public ngOnInit(): void {

@@ -42,3 +42,12 @@ export interface IRouteLink {
   link: string;
   icon: string;
 }
+
+export interface IVacany {
+  id: string;
+  title: string;
+  description: string;
+  created_at: string;
+  endDate: string;
+  questionId: string;
+}

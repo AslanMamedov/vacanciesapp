@@ -38,10 +38,10 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CInputRadioGroupComponent {
+export class RadioGroupComponent {
   public name = input.required<string>({ alias: 'name' });
-
   public optionList = input.required<IInputOptions[]>();
+  // -----
 
   public parentContainer = inject<ControlContainer>(ControlContainer);
   public get parentFormGroup(): FormGroup {

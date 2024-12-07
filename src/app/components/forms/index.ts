@@ -1,1 +1,1 @@
-export * from './applay-form.component';
+export * from './applay.component';
