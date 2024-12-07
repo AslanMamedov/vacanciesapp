@@ -1,4 +1,5 @@
 import { API_URL } from '#constants';
+import { IQuestions } from '#types';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -13,7 +14,7 @@ export class HttpVacancyService {
     return this.http.get(API_URL);
   }
 
-  getQuestins(id: string): Observable<unknown> {
+  getQuestins(id: string): Observable<{}> {
     return this.http.get(`${API_URL}/${id}`);
   }
 }

@@ -23,9 +23,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { Subject } from 'rxjs';
 import { SelectComponent } from '../form_inputs/select.component';
-import { DrawerService } from '#services';
+import { ConfirmService, DrawerService, TimerService } from '#services';
 import { phonePrefix } from '#constants';
-import { ConfirmService } from '#services/confirm.service';
 
 @Component({
   selector: 'app-applay',
@@ -96,6 +95,7 @@ export class ApplayComponent {
   public phonePrefixList: NumberList[] = phonePrefix;
   protected drawerService = inject(DrawerService);
   protected confirmService = inject(ConfirmService);
+  public timerService = inject(TimerService);
   constructor(private fb: NonNullableFormBuilder) {
     this.validateForm = this.fb.group({
       surname: this.fb.control('', [Validators.required]),
@@ -126,10 +126,10 @@ export class ApplayComponent {
       };
       this.confirmService.onIsVisibleHanler();
 
-
       // this.store.dispatch(
       //   UserDataActions.addUserInfo({ payload: vacancyData })
       // );
+      this.timerService.onIsStartHandler();
       console.log(vacancyData);
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {

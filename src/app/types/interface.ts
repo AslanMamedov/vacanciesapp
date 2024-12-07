@@ -12,7 +12,7 @@ export interface IQuestionList {
 export interface IQuestionData {
   [key: string]: {
     question: string;
-    option: string;
+    options: IInputOptions[];
     right: string;
     point?: string;
     rightAnswer?: boolean;
@@ -50,4 +50,8 @@ export interface IVacany {
   created_at: string;
   endDate: string;
   questionId: string;
+}
+
+export interface IQuestions {
+  [key: string]: IQuestionList;
 }

@@ -14,7 +14,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 @Component({
-  selector: 'app-c-input-radio-group',
+  selector: 'app-radio-group',
   standalone: true,
   imports: [NzRadioModule, ReactiveFormsModule, NzFormModule],
   viewProviders: [

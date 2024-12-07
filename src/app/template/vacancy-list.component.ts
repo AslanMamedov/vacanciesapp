@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { catchError, EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-vacancy-list',
@@ -40,10 +41,17 @@ export class VacancyListComponent {
   loadingData = signal(true);
   ngOnInit() {
     this.loadingData.set(true);
-    this.vacancyService.getVacancies().subscribe((data) => {
-      this.vacancyList.set(data as IVacany[]);
-      this.loadingData.set(false);
-    });
+    this.vacancyService
+      .getVacancies()
+      .pipe(
+        catchError(() => {
+          return EMPTY;
+        })
+      )
+      .subscribe((data) => {
+        this.vacancyList.set(data as IVacany[]);
+        this.loadingData.set(false);
+      });
   }
 
   generate() {
