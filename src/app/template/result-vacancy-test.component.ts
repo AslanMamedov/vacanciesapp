@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpVacancyService } from '#services';
 import { formatPhoneNumber } from '#utils';
 import { DatePipe } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { catchError, EMPTY, Subscription } from 'rxjs';
 import {
   IVacancyResultData,
   IUserResultData,
@@ -95,6 +95,11 @@ export class ResultVacancyTestComponent {
     const answerId: string = this.activeRoute.snapshot.params['resultId'];
     this.subscription$ = this.vacancyService
       .getUserAnswerVacancy(id, answerId)
+      .pipe(
+        catchError(() => {
+          return EMPTY;
+        })
+      )
       .subscribe((data) => {
         this.isLoading.set(false);
         const userInfo = {
