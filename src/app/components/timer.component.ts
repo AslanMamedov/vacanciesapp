@@ -1,14 +1,14 @@
-import { LocalStorageService } from '#services';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { TimerService } from '#services/timer.service';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { LocalStorageService } from '#services';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   signal,
 } from '@angular/core';
-import { NzGridModule } from 'ng-zorro-antd/grid';
-import { NzStatisticModule } from 'ng-zorro-antd/statistic';
-
+//--
 @Component({
   selector: 'app-timer',
   standalone: true,
@@ -31,9 +31,10 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 })
 export class TimerComponent {
   public deadline = signal(Date.now() + 1 * 60 * 1000);
+  public timerStarted = signal<boolean>(false);
+  //
   public timerService = inject(TimerService);
   protected localStorage = inject(LocalStorageService);
-  public timerStarted = signal(false);
   public ngOnInit(): void {
     this.timerStarted.set(true);
 
@@ -44,7 +45,7 @@ export class TimerComponent {
     });
   }
 
-  finish() {
+  protected finish() {
     this.timerService.onFinished();
   }
 }

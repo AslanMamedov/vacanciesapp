@@ -1,7 +1,7 @@
-import { QuestionsStepComponent } from '#template';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { DrawerService } from '../services/drawer.service';
-
+import { QuestionsStepComponent } from '#template';
+import { DrawerService } from '#services';
+//-
 @Component({
   selector: 'app-questions',
   standalone: true,
@@ -12,7 +12,7 @@ import { DrawerService } from '../services/drawer.service';
 export class QuestionsComponent {
   protected drawerService = inject(DrawerService);
 
-  ngOnInit(): void {
+  protected ngOnInit(): void {
     this.drawerService.onClose();
   }
 }

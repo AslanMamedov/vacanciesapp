@@ -1,6 +1,7 @@
-import { DrawerService } from '#services';
-import { Component, inject } from '@angular/core';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { Component, inject } from '@angular/core';
+import { DrawerService } from '#services';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-drawer',
@@ -8,9 +9,9 @@ import { NzDrawerModule } from 'ng-zorro-antd/drawer';
   imports: [NzDrawerModule],
   template: `
     <nz-drawer
+      nzPlacement="right"
       [nzClosable]="false"
       [nzVisible]="isVisible"
-      nzPlacement="right"
       (nzOnClose)="onClose()"
     >
       <ng-container *nzDrawerContent>
@@ -21,15 +22,21 @@ import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 })
 export class DrawerComponent {
   protected isVisible: boolean = false;
+  //
+  protected subscription$: Subscription | null = null;
   protected drawerService = inject(DrawerService);
-
-  public ngOnInit(): void {
-    this.drawerService.dreawerIsVisible.subscribe((visible) => {
-      this.isVisible = visible;
-    });
+  protected ngOnInit(): void {
+    this.subscription$ = this.drawerService.dreawerIsVisible.subscribe(
+      (visible) => {
+        this.isVisible = visible;
+      }
+    );
   }
 
-  public onClose(): void {
+  protected onClose(): void {
     this.drawerService.onClose();
+  }
+  protected ngOnDestroy(): void {
+    this.subscription$?.unsubscribe();
   }
 }

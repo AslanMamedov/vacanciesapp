@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-
+//--
 @Injectable({
   providedIn: 'root',
 })
 export class DrawerService {
-  dreawerIsVisible = new BehaviorSubject<boolean>(false);
-  onIsVisibleHanler() {
+  public dreawerIsVisible = new BehaviorSubject<boolean>(false);
+  public onIsVisibleHanler(): void {
     this.dreawerIsVisible.next(true);
   }
 
-  onClose() {
+  public onClose(): void {
     this.dreawerIsVisible.next(false);
   }
 }

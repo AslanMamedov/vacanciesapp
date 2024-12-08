@@ -1,16 +1,16 @@
-import { DrawerComponent } from '#components';
-import { ApplayComponent } from '#components/forms';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { VacancyListComponent } from './vacancy-list.component';
 import { NzModalModule } from 'ng-zorro-antd/modal';
-
+import { ApplayComponent } from '#components/forms';
+import { VacancyListComponent } from '#template';
+import { DrawerComponent } from '#components';
+//--
 @Component({
   selector: 'app-vacancy',
   standalone: true,
   imports: [
+    VacancyListComponent,
     DrawerComponent,
     ApplayComponent,
-    VacancyListComponent,
     NzModalModule,
   ],
   template: `

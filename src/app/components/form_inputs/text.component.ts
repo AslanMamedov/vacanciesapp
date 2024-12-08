@@ -1,32 +1,30 @@
-import { NumberList } from '#types';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import {
   ChangeDetectionStrategy,
+  TemplateRef,
   Component,
+  viewChild,
   inject,
   input,
-  TemplateRef,
-  viewChild,
 } from '@angular/core';
 import {
   ReactiveFormsModule,
   ControlContainer,
   FormGroup,
 } from '@angular/forms';
-
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
-
+//--
 @Component({
   selector: 'app-text',
   standalone: true,
   imports: [
-    ReactiveFormsModule,
     NzFormModule,
     NzInputModule,
     NzSelectModule,
     NgxMaskDirective,
+    ReactiveFormsModule,
   ],
   providers: [provideNgxMask()],
   viewProviders: [
@@ -61,19 +59,22 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 })
 export class TextComponent {
   public name = input.required<string>({ alias: 'name' });
-  public errorText = input<string>();
   public placeholder = input.required<string>({
     alias: 'placeholder',
   });
-  public mask = input<string>();
   public withSelect = input<boolean>();
-  addOnBeforeTemplate = viewChild('addOnBeforeTemplate', { read: TemplateRef });
+  public errorText = input<string>();
+  public mask = input<string>();
+  //
+  protected addOnBeforeTemplate = viewChild('addOnBeforeTemplate', {
+    read: TemplateRef,
+  });
   public parentContainer = inject<ControlContainer>(ControlContainer);
   public get parentFormGroup(): FormGroup {
     return this.parentContainer.control as FormGroup;
   }
 
-  isPrefix() {
+  protected isPrefix() {
     return this.withSelect() ? this.addOnBeforeTemplate() : '';
   }
 

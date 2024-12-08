@@ -15,6 +15,6 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StepsComponent {
-  stepsSize = input.required<number[]>({ alias: 'stepsSize' });
-  current = input.required<number>({ alias: 'current' });
+  public stepsSize = input.required<number[]>({ alias: 'stepsSize' });
+  public current = input.required<number>({ alias: 'current' });
 }

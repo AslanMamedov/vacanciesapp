@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
-
+import { NzFormModule } from 'ng-zorro-antd/form';
+//--
 @Component({
   selector: 'app-label',
   standalone: true,
@@ -12,10 +12,9 @@ import { NzInputModule } from 'ng-zorro-antd/input';
       label()
     }}</nz-form-label>
   `,
-  styles: ``,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelComponent {
-  label = input.required<string>({ alias: 'label' });
-  name = input.required<string>({ alias: 'name' });
+  public label = input.required<string>({ alias: 'label' });
+  public name = input.required<string>({ alias: 'name' });
 }

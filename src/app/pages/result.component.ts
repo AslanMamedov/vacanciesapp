@@ -1,6 +1,6 @@
-import { ResultVacancyTestComponent } from '#template';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-
+import { ResultVacancyTestComponent } from '#template';
+//--
 @Component({
   selector: 'app-result',
   standalone: true,

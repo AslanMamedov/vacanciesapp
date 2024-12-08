@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
-
+import { NzIconModule } from 'ng-zorro-antd/icon';
+//--
 @Component({
   selector: 'app-main',
   standalone: true,

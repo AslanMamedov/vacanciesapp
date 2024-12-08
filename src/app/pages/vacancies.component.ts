@@ -1,6 +1,6 @@
-import { VacancyComponent } from '#template';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-
+import { VacancyComponent } from '#template';
+//--
 @Component({
   selector: 'app-vacancies',
   standalone: true,

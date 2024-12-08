@@ -1,4 +1,4 @@
-export const formatPhoneNumber = (input: string = '') => {
+export const formatPhoneNumber = (input: string = ''): string => {
   const cleanInput = input?.replace(/\D/g, '');
   if (cleanInput.length < 7) {
     throw new Error('Input string must contain at least 7 digits.');

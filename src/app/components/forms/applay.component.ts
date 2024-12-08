@@ -1,48 +1,44 @@
-import { TextComponent } from '#components/form_inputs';
-import { ControlComponent } from '#components/form_inputs/control.component';
 import { LabelComponent } from '#components/form_inputs/label.component';
+import { SelectComponent } from '../form_inputs/select.component';
+import { TextComponent } from '#components/form_inputs';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { IUserData, NumberList } from '#types';
+import { Router } from '@angular/router';
+import { phonePrefix } from '#constants';
+import { Subscription } from 'rxjs';
 import {
-  afterNextRender,
-  afterRender,
   ChangeDetectionStrategy,
   Component,
-  DoCheck,
-  effect,
   inject,
-  input,
   signal,
 } from '@angular/core';
 import {
-  FormGroup,
   NonNullableFormBuilder,
   ReactiveFormsModule,
   Validators,
+  FormGroup,
 } from '@angular/forms';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { Subject } from 'rxjs';
-import { SelectComponent } from '../form_inputs/select.component';
+
 import {
-  DrawerService,
   LocalStorageService,
+  DrawerService,
   TimerService,
   UserService,
 } from '#services';
-import { phonePrefix } from '#constants';
-import { NzModalService } from 'ng-zorro-antd/modal';
-import { Router } from '@angular/router';
+//--
 
 @Component({
   selector: 'app-applay',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    SelectComponent,
     NzButtonModule,
+    LabelComponent,
     NzFormModule,
     TextComponent,
-    SelectComponent,
-    LabelComponent,
   ],
   template: `
     <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()" class="">
@@ -51,30 +47,30 @@ import { Router } from '@angular/router';
       </app-text>
       <app-text
         name="surname"
-        errorText="Soyadını daxil edin!"
         placeholder="Soyad"
+        errorText="Soyadını daxil edin!"
       >
         <app-label ngProjectAs="label" label="Soyad" name="surname"></app-label>
       </app-text>
       <app-text
         name="email"
-        errorText="E-mail daxil edin!"
         placeholder="E-mail"
+        errorText="E-mail daxil edin!"
       >
         <app-label ngProjectAs="label" label="E-mail" name="email"></app-label>
       </app-text>
 
       <app-text
-        errorText="Telefon daxil edin!"
         mask="000-00-00"
         name="phoneNumber"
-        placeholder="Telefon"
         [withSelect]="true"
+        placeholder="Telefon"
+        errorText="Telefon daxil edin!"
       >
         <app-label
-          ngProjectAs="label"
           label="Telefon"
           name="phoneNumber"
+          ngProjectAs="label"
         ></app-label>
 
         <app-select
@@ -96,38 +92,39 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplayComponent {
-  protected validateForm: FormGroup;
-  public phonePrefixList: NumberList[] = phonePrefix;
   protected userData = signal<IUserData | null>(null);
-
+  public phonePrefixList: NumberList[] = phonePrefix;
+  protected validateForm: FormGroup;
+  protected subscription$: Subscription | null = null;
   //
-  public localStorageService = inject(LocalStorageService);
+  protected localStorageService = inject(LocalStorageService);
   protected drawerService = inject(DrawerService);
   protected userService = inject(UserService);
-  public timerService = inject(TimerService);
+  protected timerService = inject(TimerService);
   protected router = inject<Router>(Router);
   protected modal = inject(NzModalService);
-
   //
   constructor(private fb: NonNullableFormBuilder) {
     this.validateForm = this.fb.group({
+      email: this.fb.control('', [Validators.email, Validators.required]),
+      phoneNumber: this.fb.control('', [Validators.required]),
+      phoneNumberPrefix: this.fb.control<NumberList>('055'),
       surname: this.fb.control('', [Validators.required]),
       name: this.fb.control('', [Validators.required]),
-      email: this.fb.control('', [Validators.email, Validators.required]),
-      phoneNumberPrefix: this.fb.control<NumberList>('055'),
-      phoneNumber: this.fb.control('', [Validators.required]),
     });
   }
 
-  ngOnInit(): void {
-    this.drawerService.dreawerIsVisible.subscribe((isVisible) => {
-      if (!isVisible) {
-        this.validateForm.reset();
+  protected ngOnInit(): void {
+    this.subscription$ = this.drawerService.dreawerIsVisible.subscribe(
+      (isVisible) => {
+        if (!isVisible) {
+          this.validateForm.reset();
+        }
       }
-    });
+    );
   }
 
-  showConfirm(id: string): void {
+  protected showConfirm(id: string): void {
     this.modal.confirm({
       nzTitle: '<i>Vakansiyaya müraciət etmək üçün testdən keçməlisiniz.</i>',
       nzContent:
@@ -160,5 +157,9 @@ export class ApplayComponent {
         }
       });
     }
+  }
+
+  protected ngOnDestroy(): void {
+    this.subscription$?.unsubscribe();
   }
 }

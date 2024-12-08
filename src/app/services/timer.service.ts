@@ -1,28 +1,29 @@
+import { LocalStorageService } from './local-storage.service';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { LocalStorageService } from './local-storage.service';
-
+//--
 @Injectable({
   providedIn: 'root',
 })
 export class TimerService {
   public timerisStarted = new BehaviorSubject<boolean>(false);
   public timerFinished = new BehaviorSubject<boolean>(false);
+  //
   protected localStorage = inject(LocalStorageService);
-  onIsStartHandler() {
+  public onIsStartHandler(): void {
     this.timerisStarted.next(true);
   }
 
-  onTimeStart() {
+  public onTimeStart(): void {
     this.timerisStarted.next(true);
     this.timerFinished.next(false);
   }
 
-  onStop() {
+  public onStop(): void {
     this.timerisStarted.next(false);
   }
 
-  onFinished() {
+  public onFinished(): void {
     this.timerFinished.next(true);
   }
 }

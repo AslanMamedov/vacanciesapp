@@ -1,16 +1,21 @@
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { IQuestionData, IServerResponseData } from '#types';
+import { ActivatedRoute, Router } from '@angular/router';
+import { catchError, EMPTY, Subscription } from 'rxjs';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import {
-  LoadingComponent,
   RadioGroupComponent,
+  LoadingComponent,
   StepsComponent,
-  TextComponent,
   TimerComponent,
+  TextComponent,
 } from '#components';
 import {
-  HttpVacancyService,
   LocalStorageService,
+  HttpVacancyService,
   TimerService,
 } from '#services';
-import { IQuestionData, IServerResponseData } from '#types';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,28 +23,23 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { catchError, EMPTY, Subject, takeUntil } from 'rxjs';
+//--
 
 @Component({
   selector: 'app-questions-step',
   standalone: true,
   imports: [
-    NzFormModule,
+    RadioGroupComponent,
+    ReactiveFormsModule,
+    LoadingComponent,
+    TimerComponent,
     NzButtonModule,
     StepsComponent,
     TextComponent,
-    ReactiveFormsModule,
-    TimerComponent,
-    RadioGroupComponent,
-    LoadingComponent,
+    NzFormModule,
   ],
   template: `
     @if(isLoading()) {
-
     <div class="flex items-center justify-center !min-h-[500px]">
       <app-loading></app-loading>
     </div>
@@ -104,24 +104,26 @@ import { catchError, EMPTY, Subject, takeUntil } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionsStepComponent {
+  protected timerFinishedSubscription$: Subscription | null = null;
+  protected applayVacancySubscription$: Subscription | null = null;
+  protected getQuestinsSubscription$: Subscription | null = null;
+  //
+  public radionButtonDisabled = signal<boolean>(false);
+  protected questionData = signal<IQuestionData>({});
+  protected questions = signal<IQuestionData>({});
+  public activeButton = signal<boolean>(false);
+  public isLoading = signal<boolean>(true);
+  public stepsSize = signal<number[]>([]);
+  public optionList = signal<number>(0);
+  public current = signal<number>(1);
+  //
   protected localStorageService = inject(LocalStorageService);
   protected vacancyService = inject(HttpVacancyService);
   protected activeRoute = inject(ActivatedRoute);
   protected timerService = inject(TimerService);
   protected router = inject(Router);
-  //
-  protected questionData = signal<IQuestionData>({});
-  protected questions = signal<IQuestionData>({});
-  public stepsSize = signal<number[]>([]);
-  public isLoading = signal<boolean>(true);
-  public activeButton = signal<boolean>(false);
-  public radionButtonDisabled = signal<boolean>(false);
-  public optionList = signal<number>(0);
-  public current = signal<number>(1);
-  //
   protected validateForm: FormGroup;
-  private destroy$ = new Subject<void>();
-  private destroyQuestion$ = new Subject<void>();
+
   constructor(private fb: FormBuilder) {
     this.validateForm = this.fb.group({
       option: null,
@@ -129,12 +131,11 @@ export class QuestionsStepComponent {
     });
   }
 
-  public ngOnInit() {
+  protected ngOnInit(): void {
     const id: string = this.activeRoute.snapshot.params['id'];
-    this.vacancyService
+    this.getQuestinsSubscription$ = this.vacancyService
       .getQuestins(id)
       .pipe(
-        takeUntil(this.destroyQuestion$),
         catchError(() => {
           return EMPTY;
         })
@@ -159,27 +160,29 @@ export class QuestionsStepComponent {
       };
     });
     this.activeButton.set(true);
-    this.timerService.timerFinished.subscribe((isDisabled) => {
-      if (isDisabled) {
-        this.activeButton.set(false);
-        this.radionButtonDisabled.set(true);
+    this.timerFinishedSubscription$ = this.timerService.timerFinished.subscribe(
+      (isDisabled) => {
+        if (isDisabled) {
+          this.activeButton.set(false);
+          this.radionButtonDisabled.set(true);
+        }
       }
-    });
+    );
   }
 
   public question = computed(() => this.questions()[this.current()]);
 
-  optionText() {
+  protected optionText(): string | undefined {
     return this.question().options.find(
       (item) => item.value === this.validateForm.get('option')?.value
     )?.label;
   }
 
-  isDisabled() {
+  protected isDisabled(): boolean {
     return this.validateForm.get('option')?.value === null;
   }
 
-  addQuestion() {
+  protected addQuestion(): FormGroup {
     return this.fb.group({
       question: [this.question()],
       option: [this.validateForm.get('option')?.value],
@@ -208,7 +211,7 @@ export class QuestionsStepComponent {
     this.timerService.onTimeStart();
   }
 
-  public onSubmit(): void {
+  protected onSubmit(): void {
     const id = this.activeRoute.snapshot.params['id'];
     this.questionData.update((prev) => {
       return {
@@ -217,7 +220,7 @@ export class QuestionsStepComponent {
       };
     });
     this.localStorageService.setItem('questions', this.questionData());
-    this.vacancyService
+    this.applayVacancySubscription$ = this.vacancyService
       .applayVacancy(
         {
           answerQuestions: this.questionData(),
@@ -225,7 +228,6 @@ export class QuestionsStepComponent {
         },
         this.activeRoute.snapshot.params['id']
       )
-      .pipe(takeUntil(this.destroy$))
       .subscribe((data) => {
         this.localStorageService.removeItem('user'),
           this.localStorageService.removeItem('questions'),
@@ -233,10 +235,9 @@ export class QuestionsStepComponent {
           this.router.navigate(['', id, data.id], { replaceUrl: true });
       });
   }
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-    this.destroyQuestion$.next();
-    this.destroyQuestion$.complete();
+  protected ngOnDestroy(): void {
+    this.getQuestinsSubscription$?.unsubscribe();
+    this.timerFinishedSubscription$?.unsubscribe();
+    this.applayVacancySubscription$?.unsubscribe();
   }
 }

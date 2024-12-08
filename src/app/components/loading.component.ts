@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-loading',
   standalone: true,
   imports: [],
-  template: ` <span class="loader"></span> `,
+  template: `<span class="loader"></span> `,
   styles: `
   .loader {
     width: 88px;

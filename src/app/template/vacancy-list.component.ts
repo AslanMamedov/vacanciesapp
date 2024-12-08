@@ -1,3 +1,6 @@
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { catchError, EMPTY, Subscription } from 'rxjs';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { VacancyCardComponent } from '#components';
 import { HttpVacancyService } from '#services';
 import { IVacany } from '#types';
@@ -7,9 +10,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { catchError, EMPTY } from 'rxjs';
+//--
 
 @Component({
   selector: 'app-vacancy-list',
@@ -36,12 +37,15 @@ import { catchError, EMPTY } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VacancyListComponent {
-  vacancyService = inject(HttpVacancyService);
-  vacancyList = signal<IVacany[]>([]);
-  loadingData = signal(true);
-  ngOnInit() {
+  protected subscription$: Subscription | null = null;
+  protected vacancyList = signal<IVacany[]>([]);
+  protected loadingData = signal<boolean>(true);
+  //
+  public vacancyService = inject(HttpVacancyService);
+  //
+  protected ngOnInit(): void {
     this.loadingData.set(true);
-    this.vacancyService
+    this.subscription$ = this.vacancyService
       .getVacancies()
       .pipe(
         catchError(() => {
@@ -54,7 +58,11 @@ export class VacancyListComponent {
       });
   }
 
-  generate() {
+  protected generate(): number[] {
     return Array.from({ length: 5 }, (_, index) => index + 1);
+  }
+
+  protected ngOnDestroy(): void {
+    this.subscription$?.unsubscribe();
   }
 }

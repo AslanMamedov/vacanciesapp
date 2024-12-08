@@ -1,15 +1,16 @@
 import { DrawerService, UserService } from '#services';
-import { IVacany } from '#types';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { DatePipe } from '@angular/common';
+import { IVacany } from '#types';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   input,
 } from '@angular/core';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzIconModule } from 'ng-zorro-antd/icon';
+//--
 
 @Component({
   selector: 'app-vacancy-card',
@@ -57,7 +58,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 })
 export class VacancyCardComponent {
   public vacancy = input.required<IVacany>({ alias: 'vacancy' });
-
+  //
   protected drawerService = inject(DrawerService);
   protected userService = inject(UserService);
   public applayVacancy(id: string): void {

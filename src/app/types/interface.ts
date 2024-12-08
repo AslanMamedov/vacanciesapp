@@ -1,3 +1,5 @@
+import { IVacancyResultData } from '#types';
+
 export interface IInputOptions {
   label: string;
   value: string;
@@ -69,8 +71,6 @@ export interface IAnswerQuestion {
   rightAnswer: boolean;
 }
 
-export type IUserResultData = Omit<IUserData, 'id'>;
-export type IVacancyResultData = Omit<IVacany, 'id' | 'questionId'>;
 export interface IResult {
   answerQuestins: IAnswerQuestion[];
   aboutVacancy: IVacancyResultData;

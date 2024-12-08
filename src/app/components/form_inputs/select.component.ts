@@ -1,3 +1,5 @@
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { NumberList } from '#types';
 import {
   ChangeDetectionStrategy,
@@ -6,13 +8,11 @@ import {
   input,
 } from '@angular/core';
 import {
+  ReactiveFormsModule,
   ControlContainer,
   FormGroup,
-  ReactiveFormsModule,
 } from '@angular/forms';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-
+//--
 @Component({
   selector: 'app-select',
   standalone: true,
@@ -36,9 +36,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 })
 export class SelectComponent {
   public name = input.required<string>({ alias: 'name' });
-
   public optionList = input<NumberList[]>();
-
+  //
   public parentContainer = inject<ControlContainer>(ControlContainer);
   public get parentFormGroup(): FormGroup {
     return this.parentContainer.control as FormGroup;

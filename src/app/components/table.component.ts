@@ -6,10 +6,10 @@ import { NzTableModule } from 'ng-zorro-antd/table';
   selector: 'app-table',
   standalone: true,
   imports: [NzTableModule, NzDividerModule],
-  template: ` <nz-table
+  template: `<nz-table
     nzSize="small"
     [nzData]="questionList()"
-    nzShowPagination="false"
+    [nzShowPagination]="false"
   >
     <thead>
       <tr>

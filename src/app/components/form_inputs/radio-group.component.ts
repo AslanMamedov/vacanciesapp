@@ -1,3 +1,5 @@
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { IInputOptions } from '#types';
 import {
   ChangeDetectionStrategy,
@@ -6,13 +8,11 @@ import {
   input,
 } from '@angular/core';
 import {
+  ReactiveFormsModule,
   ControlContainer,
   FormGroup,
-  ReactiveFormsModule,
 } from '@angular/forms';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzRadioModule } from 'ng-zorro-antd/radio';
-
+//--
 @Component({
   selector: 'app-radio-group',
   standalone: true,
@@ -39,11 +39,10 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RadioGroupComponent {
+  public disabled = input.required<boolean>({ alias: 'disabled' });
   public name = input.required<string>({ alias: 'name' });
   public optionList = input.required<IInputOptions[]>();
-  public disabled = input.required<boolean>({ alias: 'disabled' });
-  // -----
-
+  //
   public parentContainer = inject<ControlContainer>(ControlContainer);
   public get parentFormGroup(): FormGroup {
     return this.parentContainer.control as FormGroup;

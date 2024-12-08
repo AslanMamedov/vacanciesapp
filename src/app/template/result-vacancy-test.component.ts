@@ -1,21 +1,22 @@
 import { LoadingComponent, TableComponent, UploadComponent } from '#components';
+import { ActivatedRoute } from '@angular/router';
 import { HttpVacancyService } from '#services';
-import {
-  IAnswerQuestion,
-  IPoinData,
-  IUserResultData,
-  IVacancyResultData,
-} from '#types';
 import { formatPhoneNumber } from '#utils';
 import { DatePipe } from '@angular/common';
+import { Subscription } from 'rxjs';
+import {
+  IVacancyResultData,
+  IUserResultData,
+  IAnswerQuestion,
+  IPoinData,
+} from '#types';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+//--
 
 @Component({
   selector: 'app-result-vacancy-test',
@@ -78,21 +79,22 @@ import { Subject, takeUntil } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResultVacancyTestComponent {
-  protected vacancyService = inject(HttpVacancyService);
-  public tableData = signal<IAnswerQuestion[]>([]);
-  public userData = signal<IUserResultData | null>(null);
   public vacancyData = signal<IVacancyResultData | null>(null);
+  public userData = signal<IUserResultData | null>(null);
   public pointData = signal<IPoinData | null>(null);
+  public tableData = signal<IAnswerQuestion[]>([]);
   public cvSended = signal<boolean>(false);
-  protected activeRoute = inject(ActivatedRoute);
-  private destroy$ = new Subject<void>();
   public isLoading = signal<boolean>(true);
-  ngOnInit() {
-    const id = this.activeRoute.snapshot.params['id'];
-    const answerId = this.activeRoute.snapshot.params['resultId'];
-    this.vacancyService
+  protected subscription$: Subscription | null = null;
+  //
+  protected vacancyService = inject(HttpVacancyService);
+  protected activeRoute = inject(ActivatedRoute);
+  //
+  protected ngOnInit(): void {
+    const id: string = this.activeRoute.snapshot.params['id'];
+    const answerId: string = this.activeRoute.snapshot.params['resultId'];
+    this.subscription$ = this.vacancyService
       .getUserAnswerVacancy(id, answerId)
-      .pipe(takeUntil(this.destroy$))
       .subscribe((data) => {
         this.isLoading.set(false);
         const userInfo = {
@@ -100,15 +102,14 @@ export class ResultVacancyTestComponent {
           phoneNumber: formatPhoneNumber(data.userInfo.phoneNumber),
         };
         this.vacancyData.set(data.aboutVacancy);
-        this.userData.set(userInfo);
+        this.tableData.set(data.answerQuestins);
         this.pointData.set(data.pointData);
         this.cvSended.set(data.cvSended);
-        this.tableData.set(data.answerQuestins);
+        this.userData.set(userInfo);
       });
   }
 
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
+  protected ngOnDestroy() {
+    this.subscription$?.unsubscribe();
   }
 }
