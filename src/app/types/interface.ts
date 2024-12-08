@@ -76,6 +76,7 @@ export interface IResult {
   aboutVacancy: IVacancyResultData;
   userInfo: IUserData;
   pointData: IPoinData;
+  cvSended: boolean;
 }
 
 export interface IPoinData {

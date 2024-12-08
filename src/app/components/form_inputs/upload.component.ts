@@ -1,5 +1,10 @@
 import { HttpVacancyService } from '#services';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from '@angular/core';
 import {
   FormGroup,
   Validators,
@@ -7,12 +12,21 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-upload',
   standalone: true,
   imports: [ReactiveFormsModule],
   template: `
+    @if(isDisable()) {
+    <div
+      class=" flex flex-col items-center justify-center  p-2 bg-green-500 text-white font-bold rounded-md  w-[150px] h-[50px]"
+    >
+      CV-niz yuklenib
+    </div>
+
+    } @else {
     <form
       [formGroup]="validateForm"
       (ngSubmit)="onSubmit()"
@@ -27,6 +41,7 @@ import { ActivatedRoute } from '@angular/router';
         <input
           class="hidden"
           type="file"
+          [disabled]="isDisable()"
           id="fileInput"
           accept=".pdf,.docx"
           (change)="onFileChange($event)"
@@ -37,15 +52,19 @@ import { ActivatedRoute } from '@angular/router';
       <span class="text-red-500 font-extrabold">{{ fileError }}</span>
       }
     </form>
+    }
   `,
 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadComponent {
+  public isDisable = input.required({ alias: 'isDisable' });
   protected validateForm: FormGroup;
   fileError: string | null = null;
   protected vacancyService = inject(HttpVacancyService);
   protected activeRoute = inject(ActivatedRoute);
+  protected notification = inject(NzNotificationService);
+
   constructor(private fb: NonNullableFormBuilder) {
     this.validateForm = this.fb.group({
       file: [null, Validators.required],
@@ -91,9 +110,16 @@ export class UploadComponent {
       const id = this.activeRoute.snapshot.params['id'];
       const answerId = this.activeRoute.snapshot.params['resultId'];
 
-      this.vacancyService.applayCV(id, answerId, formData).subscribe((data) => {
-        console.log('ddddd', data);
+      this.vacancyService.applayCV(id, answerId, formData).subscribe(() => {
+        this.createNotification();
       });
     }
+  }
+
+  createNotification(): void {
+    this.notification.blank(
+      'CV-ni yuklədi',
+      'CV-ni yüklədi və təsdiqləndikdən sonra cavabını əldə edə bilərsiniz.'
+    );
   }
 }

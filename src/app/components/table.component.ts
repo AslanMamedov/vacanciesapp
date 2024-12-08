@@ -20,7 +20,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
         <th>Status</th>
       </tr>
     </thead>
-    <tbody >
+    <tbody>
       @for (question of questionList(); track question; let idx = $index) {
       <tr>
         <td>{{ idx + 1 }}</td>
@@ -31,12 +31,14 @@ import { NzTableModule } from 'ng-zorro-antd/table';
           <span class="bg-green-500 p-2 rounded-sm text-white font-bold ">
             {{ question.options }}</span
           >
-          } @else {
-
+          } @else { @if( question?.options ) {
           <span class="bg-red-500 p-2 rounded-sm text-white font-bold">
-            {{ question.options }}
+            {{ question?.options }}
           </span>
-          }
+
+          } @else {
+          <span class="p-2 rounded-sm text-black font-bold">-----</span>
+          } }
         </td>
         <td class="font-bold text-xl text-blue-500">{{ question.point }}</td>
         <td>

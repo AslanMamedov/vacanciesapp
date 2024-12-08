@@ -26,7 +26,6 @@ export class HttpVacancyService {
   }
 
   applayCV(id: string, vacancyId: string, data: FormData) {
-    console.log(data.get('file'));
     return this.http.post(`${API_URL}/${id}/${vacancyId}/cv`, data);
   }
 }

@@ -68,7 +68,7 @@ import { Subject, takeUntil } from 'rxjs';
             >
           </div>
           <div>
-            <app-upload></app-upload>
+            <app-upload [isDisable]="cvSended()"></app-upload>
           </div>
         </div>
       </div>
@@ -83,6 +83,7 @@ export class ResultVacancyTestComponent {
   public userData = signal<IUserResultData | null>(null);
   public vacancyData = signal<IVacancyResultData | null>(null);
   public pointData = signal<IPoinData | null>(null);
+  public cvSended = signal<boolean>(false);
   protected activeRoute = inject(ActivatedRoute);
   private destroy$ = new Subject<void>();
   public isLoading = signal<boolean>(true);
@@ -101,6 +102,7 @@ export class ResultVacancyTestComponent {
         this.vacancyData.set(data.aboutVacancy);
         this.userData.set(userInfo);
         this.pointData.set(data.pointData);
+        this.cvSended.set(data.cvSended);
         this.tableData.set(data.answerQuestins);
       });
   }
