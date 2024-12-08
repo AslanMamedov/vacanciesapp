@@ -28,7 +28,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
       <nz-form-control>
         <nz-radio-group [formControlName]="name()" class="flex flex-col gap-4">
           @for(option of optionList(); track option.value) {
-          <label nz-radio [nzValue]="option.value">
+          <label nz-radio [nzValue]="option.value" [nzDisabled]="disabled()">
             {{ option.label }}
           </label>
           }
@@ -41,6 +41,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 export class RadioGroupComponent {
   public name = input.required<string>({ alias: 'name' });
   public optionList = input.required<IInputOptions[]>();
+  public disabled = input.required<boolean>({ alias: 'disabled' });
   // -----
 
   public parentContainer = inject<ControlContainer>(ControlContainer);

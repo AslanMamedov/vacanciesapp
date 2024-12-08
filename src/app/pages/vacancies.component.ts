@@ -6,7 +6,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   standalone: true,
   imports: [VacancyComponent],
   template: `<app-vacancy></app-vacancy>`,
-  styles: ``,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VacanciesComponent {}

@@ -7,17 +7,22 @@ import { LocalStorageService } from './local-storage.service';
 })
 export class TimerService {
   public timerisStarted = new BehaviorSubject<boolean>(false);
+  public timerFinished = new BehaviorSubject<boolean>(false);
   protected localStorage = inject(LocalStorageService);
   onIsStartHandler() {
     this.timerisStarted.next(true);
-    this.localStorage.setItem('endTime', Date.now() + 15 * 60 * 1000);
   }
 
   onTimeStart() {
     this.timerisStarted.next(true);
+    this.timerFinished.next(false);
   }
 
   onStop() {
     this.timerisStarted.next(false);
+  }
+
+  onFinished() {
+    this.timerFinished.next(true);
   }
 }

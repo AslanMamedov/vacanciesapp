@@ -45,7 +45,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
             [nzSize]="'large'"
             nz-button
             nzType="primary"
-            (click)="applayVacancy(vacancy().questionId)"
+            (click)="applayVacancy(vacancy().id)"
           >
             Müraciət et
           </button>

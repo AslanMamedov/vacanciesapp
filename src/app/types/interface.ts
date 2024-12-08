@@ -55,3 +55,31 @@ export interface IVacany {
 export interface IQuestions {
   [key: string]: IQuestionList;
 }
+
+export interface IServerResponseData {
+  steps: number[];
+  question: IQuestionData;
+  endDate: number;
+}
+
+export interface IAnswerQuestion {
+  options: string;
+  point: number;
+  question: string;
+  rightAnswer: boolean;
+}
+
+export type IUserResultData = Omit<IUserData, 'id'>;
+export type IVacancyResultData = Omit<IVacany, 'id' | 'questionId'>;
+export interface IResult {
+  answerQuestins: IAnswerQuestion[];
+  aboutVacancy: IVacancyResultData;
+  userInfo: IUserData;
+  pointData: IPoinData;
+}
+
+export interface IPoinData {
+  point: string;
+  questinCount: number;
+  rightAnswer: number;
+}

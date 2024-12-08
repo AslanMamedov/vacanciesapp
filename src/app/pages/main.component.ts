@@ -12,7 +12,7 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
         class="bg-[#1890ff] fixed w-full z-50 text-center font-bold text-white text-2xl pt-4"
         >Vacancy</nz-header
       >
-      <nz-content class="p-4 mt-12">
+      <nz-content class="p-4 mt-12 h-1/5">
         <router-outlet></router-outlet>
       </nz-content>
     </nz-layout>

@@ -1,1 +1,1 @@
-export * from './generateSteps';
+export * from './formatPhoneNumber';

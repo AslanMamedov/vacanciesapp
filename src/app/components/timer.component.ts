@@ -22,7 +22,6 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
           nzFormat="mm:ss"
           (nzCountdownFinish)="finish()"
         ></nz-countdown>
-
         }
       </nz-col>
     </nz-row>
@@ -31,28 +30,21 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimerComponent {
-  public deadline = signal(Date.now() + 15 * 60 * 1000);
+  public deadline = signal(Date.now() + 1 * 60 * 1000);
   public timerService = inject(TimerService);
   protected localStorage = inject(LocalStorageService);
   public timerStarted = signal(false);
   public ngOnInit(): void {
-    this.timerService.timerisStarted.subscribe((start) => {
-      this.timerStarted.set(start);
-    });
-    this.currentTime();
-  }
+    this.timerStarted.set(true);
 
-  public currentTime(): void {
-    const end: number = this.localStorage.getItem('endTime') as number;
-    const start: number = this.localStorage.getItem('endTime') as number;
-    const currentTime = Date.now();
-    const t = start - currentTime;
-    const time = currentTime + t;
-    this.timerService.onTimeStart();
-    this.deadline.set(time);
+    this.timerService.timerisStarted.subscribe((start) => {
+      if (start) {
+        this.deadline.set(Date.now() + 1 * 60 * 1000);
+      }
+    });
   }
 
   finish() {
-    this.timerService.onStop();
+    this.timerService.onFinished();
   }
 }

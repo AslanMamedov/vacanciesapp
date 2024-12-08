@@ -23,8 +23,15 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { Subject } from 'rxjs';
 import { SelectComponent } from '../form_inputs/select.component';
-import { ConfirmService, DrawerService, TimerService } from '#services';
+import {
+  DrawerService,
+  LocalStorageService,
+  TimerService,
+  UserService,
+} from '#services';
 import { phonePrefix } from '#constants';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-applay',
@@ -89,13 +96,19 @@ import { phonePrefix } from '#constants';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplayComponent {
-  private destroy$ = new Subject<void>();
-
   protected validateForm: FormGroup;
   public phonePrefixList: NumberList[] = phonePrefix;
+  protected userData = signal<IUserData | null>(null);
+
+  //
+  public localStorageService = inject(LocalStorageService);
   protected drawerService = inject(DrawerService);
-  protected confirmService = inject(ConfirmService);
+  protected userService = inject(UserService);
   public timerService = inject(TimerService);
+  protected router = inject<Router>(Router);
+  protected modal = inject(NzModalService);
+
+  //
   constructor(private fb: NonNullableFormBuilder) {
     this.validateForm = this.fb.group({
       surname: this.fb.control('', [Validators.required]),
@@ -114,23 +127,31 @@ export class ApplayComponent {
     });
   }
 
-  onClose(): void {
-    // this.showConfirm.set($event);
+  showConfirm(id: string): void {
+    this.modal.confirm({
+      nzTitle: '<i>Vakansiyaya müraciət etmək üçün testdən keçməlisiniz.</i>',
+      nzContent:
+        '<b>Test 15 dəqiqə ərzində tamamlanacaq və hər düzgün cavab 1 bal olaraq hesablanacaq.</b>',
+      nzOnOk: () => {
+        this.localStorageService.setItem('current_step', 1);
+        this.localStorageService.setItem('user', this.userData());
+        this.router.navigate(['', id]);
+        this.timerService.onTimeStart();
+      },
+      nzOkText: 'Testə başla',
+      nzCancelText: null,
+    });
   }
 
   protected submitForm(): void {
+    const id = this.userService.getVacancyId();
     if (this.validateForm.valid) {
       const vacancyData: IUserData = {
         ...this.validateForm.value,
-        id: '1',
+        id: id,
       };
-      this.confirmService.onIsVisibleHanler();
-
-      // this.store.dispatch(
-      //   UserDataActions.addUserInfo({ payload: vacancyData })
-      // );
-      this.timerService.onIsStartHandler();
-      console.log(vacancyData);
+      this.showConfirm(id);
+      this.userData.set(vacancyData);
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
         if (control.invalid) {
@@ -139,10 +160,5 @@ export class ApplayComponent {
         }
       });
     }
-  }
-
-  public ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }

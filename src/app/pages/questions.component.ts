@@ -1,5 +1,6 @@
 import { QuestionsStepComponent } from '#template';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { DrawerService } from '../services/drawer.service';
 
 @Component({
   selector: 'app-questions',
@@ -8,4 +9,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   template: ` <app-questions-step></app-questions-step> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QuestionsComponent {}
+export class QuestionsComponent {
+  protected drawerService = inject(DrawerService);
+
+  ngOnInit(): void {
+    this.drawerService.onClose();
+  }
+}
