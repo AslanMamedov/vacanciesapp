@@ -61,6 +61,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadComponent {
+  protected cvSendSubscription$: Subscription | null = null;
   protected subscription$: Subscription | null = null;
   protected fileError: string | null = null;
   protected validateForm: FormGroup;
@@ -68,6 +69,7 @@ export class UploadComponent {
   //
   protected vacancyService = inject(HttpVacancyService);
   protected notification = inject(NzNotificationService);
+
   protected activeRoute = inject(ActivatedRoute);
   protected userService = inject(UserService);
   //
@@ -75,13 +77,11 @@ export class UploadComponent {
     this.validateForm = this.fb.group({
       file: [null, Validators.required],
     });
-    this.userService.sendCv.subscribe((value) => {
-
+    this.cvSendSubscription$ = this.userService.sendCv.subscribe((value) => {
       if (value) {
         this.disabled.set(value);
-
       }
-    })
+    });
   }
 
   protected onFileChange(event: Event): void {
@@ -141,5 +141,6 @@ export class UploadComponent {
 
   protected ngOnDestroy(): void {
     this.subscription$?.unsubscribe();
+    this.cvSendSubscription$?.unsubscribe()
   }
 }

@@ -109,7 +109,6 @@ export class ResultVacancyTestComponent {
         };
         if (data.cvSended) {
           this.userService.cvSended();
-
         }
         this.vacancyData.set(data.aboutVacancy);
         this.tableData.set(data.answerQuestins);
