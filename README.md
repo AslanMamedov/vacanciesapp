@@ -23,4 +23,5 @@ Each job listing includes a unique test that candidates can complete. Points are
 - **Backend**: NestJS
 - **UI:** Tailwind CSS, Ant Design
 - **Validation:** Ngx Mask
+
 [Vacancy Backend](https://github.com/AslanMamedov/vacancy_backend)
