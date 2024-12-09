@@ -1,12 +1,13 @@
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { ActivatedRoute } from '@angular/router';
-import { HttpVacancyService } from '#services';
+import { HttpVacancyService, UserService } from '#services';
 import { Subscription } from 'rxjs';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   input,
+  signal,
 } from '@angular/core';
 import {
   FormGroup,
@@ -21,7 +22,7 @@ import {
   standalone: true,
   imports: [ReactiveFormsModule],
   template: `
-    @if(isDisable()) {
+    @if(disabled()) {
     <div
       class=" flex flex-col items-center justify-center  p-2 bg-green-500 text-white font-bold rounded-md  w-[150px] h-[50px]"
     >
@@ -43,7 +44,7 @@ import {
         <input
           class="hidden"
           type="file"
-          [disabled]="isDisable()"
+          [disabled]="disabled()"
           id="fileInput"
           accept=".pdf,.docx"
           (change)="onFileChange($event)"
@@ -60,19 +61,27 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadComponent {
-  public isDisable = input.required({ alias: 'isDisable' });
   protected subscription$: Subscription | null = null;
   protected fileError: string | null = null;
   protected validateForm: FormGroup;
+  protected disabled = signal<boolean>(false);
   //
   protected vacancyService = inject(HttpVacancyService);
-  protected activeRoute = inject(ActivatedRoute);
   protected notification = inject(NzNotificationService);
+  protected activeRoute = inject(ActivatedRoute);
+  protected userService = inject(UserService);
   //
   constructor(private fb: NonNullableFormBuilder) {
     this.validateForm = this.fb.group({
       file: [null, Validators.required],
     });
+    this.userService.sendCv.subscribe((value) => {
+
+      if (value) {
+        this.disabled.set(value);
+
+      }
+    })
   }
 
   protected onFileChange(event: Event): void {
@@ -118,6 +127,7 @@ export class UploadComponent {
         .applayCV(id, answerId, formData)
         .subscribe(() => {
           this.createNotification();
+          this.disabled.set(true);
         });
     }
   }

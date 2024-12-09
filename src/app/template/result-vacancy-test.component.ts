@@ -1,6 +1,6 @@
 import { LoadingComponent, TableComponent, UploadComponent } from '#components';
 import { ActivatedRoute } from '@angular/router';
-import { HttpVacancyService } from '#services';
+import { HttpVacancyService, UserService } from '#services';
 import { formatPhoneNumber } from '#utils';
 import { DatePipe } from '@angular/common';
 import { catchError, EMPTY, Subscription } from 'rxjs';
@@ -69,7 +69,7 @@ import {
             >
           </div>
           <div>
-            <app-upload [isDisable]="cvSended()"></app-upload>
+            <app-upload></app-upload>
           </div>
         </div>
       </div>
@@ -83,12 +83,13 @@ export class ResultVacancyTestComponent {
   public userData = signal<IUserResultData | null>(null);
   public pointData = signal<IPoinData | null>(null);
   public tableData = signal<IAnswerQuestion[]>([]);
-  public cvSended = signal<boolean>(false);
+
   public isLoading = signal<boolean>(true);
   protected subscription$: Subscription | null = null;
   //
   protected vacancyService = inject(HttpVacancyService);
   protected activeRoute = inject(ActivatedRoute);
+  protected userService = inject(UserService);
   //
   protected ngOnInit(): void {
     const id: string = this.activeRoute.snapshot.params['id'];
@@ -106,10 +107,13 @@ export class ResultVacancyTestComponent {
           ...data.userInfo,
           phoneNumber: formatPhoneNumber(data.userInfo.phoneNumber),
         };
+        if (data.cvSended) {
+          this.userService.cvSended();
+
+        }
         this.vacancyData.set(data.aboutVacancy);
         this.tableData.set(data.answerQuestins);
         this.pointData.set(data.pointData);
-        this.cvSended.set(data.cvSended);
         this.userData.set(userInfo);
       });
   }

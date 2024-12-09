@@ -48,7 +48,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
           >
           } @else {
           <span class="bg-red-500 p-2 rounded-sm text-white font-bold"
-            >Yanliş</span
+            >Yalnış</span
           >
           }
         </td>
